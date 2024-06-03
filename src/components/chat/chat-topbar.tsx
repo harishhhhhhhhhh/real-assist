@@ -27,13 +27,13 @@ export default function ChatTopbar({
         <SheetTrigger className="lg:hidden">
           <HamburgerMenuIcon className="w-5 h-5" />
         </SheetTrigger>
-        <SheetContent side="left">
+        {/* <SheetContent side="left">
           <Sidebar
             chatId={chatId || ""}
             isCollapsed={false}
             setMessages={() => { }}
           />
-        </SheetContent>
+        </SheetContent> */}
         <ModeToggle />
       </Sheet>
     </div>

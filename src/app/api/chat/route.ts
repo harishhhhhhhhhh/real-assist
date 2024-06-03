@@ -3,17 +3,17 @@ import { ChatOllama } from "@langchain/community/chat_models/ollama";
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
 import { BytesOutputParser } from "@langchain/core/output_parsers";
 
-import { OLLAMA_URL } from "@/lib/constants";
+import { OLLAMA_MODEL, OLLAMA_URL } from "@/lib/constants";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
-  const { messages, selectedModel } = await req.json();
+  const { messages } = await req.json();
 
   const model = new ChatOllama({
     baseUrl: OLLAMA_URL,
-    model: selectedModel,
+    model: OLLAMA_MODEL,
   });
 
   const parser = new BytesOutputParser();

@@ -1,44 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Message} from "ai/react";
 
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { ChatProps } from "@/models/ChatProps";
 import { cn } from "@/lib/utils";
-import { Sidebar } from "../sidebar";
+//import { Sidebar } from "../sidebar";
 import { Chat } from "./chat";
 
 interface ChatLayoutProps {
+  chatId: string;
   defaultLayout: number[];
   defaultCollapsed?: boolean;
   navCollapsedSize: number;
-  chatId: string;
-  setMessages: (messages: Message[]) => void;
 }
 
-type MergedProps = ChatLayoutProps & ChatProps;
-
 export function ChatLayout({
+  chatId,
   defaultLayout,
   navCollapsedSize,
-  messages,
-  input,
-  handleInputChange,
-  handleSubmit,
-  isLoading,
-  error,
-  stop,
-  chatId,
-  loadingSubmit,
-  formRef,
-  setMessages,
-  setInput,
-}: MergedProps) {
+}: ChatLayoutProps) {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -69,11 +53,11 @@ export function ChatLayout({
         minSize={isMobile ? 0 : 15}
         maxSize={isMobile ? 0 : 20}
       >
-        <Sidebar
+        {/* <Sidebar
           chatId={chatId}
           isCollapsed={isMobile}
           setMessages={setMessages}
-        />
+        /> */}
       </ResizablePanel>
       <ResizableHandle className={cn("hidden lg:flex")} withHandle />
       <ResizablePanel
@@ -83,20 +67,7 @@ export function ChatLayout({
         minSize={isMobile ? 0 : 80}
         maxSize={isMobile ? 0 : 85}
       >
-        <Chat
-          chatId={chatId}
-          messages={messages}
-          input={input}
-          handleInputChange={handleInputChange}
-          handleSubmit={handleSubmit}
-          isLoading={isLoading}
-          loadingSubmit={loadingSubmit}
-          error={error}
-          stop={stop}
-          formRef={formRef}
-          isMobile={isMobile}
-          setInput={setInput}
-        />
+        <Chat chatId={chatId} />
       </ResizablePanel>
     </ResizablePanelGroup>
   );

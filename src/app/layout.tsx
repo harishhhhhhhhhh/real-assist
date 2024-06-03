@@ -7,7 +7,7 @@ import { AuthProvider, AuthProviderProps } from 'react-oidc-context';
 
 import "./globals.scss";
 import { ThemeProvider } from "@/providers/theme-provider";
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] });
 

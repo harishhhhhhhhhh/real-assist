@@ -40,7 +40,6 @@ export function Sidebar({
   const [localChats, setLocalChats] = useState<
     { chatId: string; messages: Message[] }[]
   >([]);
-  const localChatss = useLocalStorageData("chat_", []);
   const [selectedChatId, setSselectedChatId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
