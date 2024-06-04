@@ -139,7 +139,7 @@ export default function ChatList({
                   <span className="bg-accent p-3 rounded-md max-w-xs sm:max-w-2xl overflow-x-auto">
                     {message.content}
                   </span>
-                  <Avatar className="flex justify-start items-center overflow-hidden">
+                  <Avatar className="flex justify-start items-center rounded-full border">
                     <AvatarImage
                       src="/"
                       alt="user"
@@ -155,7 +155,7 @@ export default function ChatList({
               )}
               {message.role === "assistant" && (
                 <div className="flex items-end gap-2">
-                  <Avatar className="flex justify-start items-center">
+                  <Avatar className="flex justify-start items-center rounded-full border">
                     <AvatarImage
                       src="/realpage-logo.png"
                       alt="AI"
@@ -195,7 +195,7 @@ export default function ChatList({
         ))}
         {loadingSubmit && (
           <div className="flex pl-4 pb-4 gap-2 items-center">
-            <Avatar className="flex justify-start items-center">
+            <Avatar className="flex justify-start items-center rounded-full border">
               <AvatarImage
                 src="/realpage-logo.png"
                 alt="AI"
@@ -214,7 +214,7 @@ export default function ChatList({
           </div>
         )}
       </div>
-      <div ref={bottomRef}></div>
+      <div id="anchor" ref={bottomRef}></div>
     </div>
   );
 }

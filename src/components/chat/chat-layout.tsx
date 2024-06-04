@@ -16,19 +16,20 @@ import { Sidebar } from "../sidebar";
 import { Chat } from "./chat";
 
 interface ChatLayoutProps {
-  chatId: string;
+  paramId: string;
   defaultLayout: number[];
   defaultCollapsed?: boolean;
   navCollapsedSize: number;
 }
 
 export function ChatLayout({
-  chatId,
+  paramId,
   defaultLayout,
   defaultCollapsed,
   navCollapsedSize,
 }: ChatLayoutProps) {
   const authContext = useAuth();
+  const [chatId, setChatId] = useState<string>(paramId);
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
   const [isMobile, setIsMobile] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
@@ -42,7 +43,7 @@ export function ChatLayout({
     handleSubmit,
     handleInputChange,
   } = useChat({
-    api: 'api/chat',
+    api: '/api/chat',
     headers: {
       Authorization: `Bearer ${authContext.user?.access_token}`
     },
@@ -67,12 +68,12 @@ export function ChatLayout({
 
   // When starting a new chat, append the messages to the local storage
   useEffect(() => {
-    if (!isLoading && !error && messages.length > 0) {
+    if (!isLoading && !error && chatId && messages.length > 0) {
       localStorage.setItem(`chat_${chatId}`, JSON.stringify(messages));
       // Trigger the storage event to update the sidebar component
       window.dispatchEvent(new Event("storage"));
     }
-  }, [messages, chatId, isLoading, error]);
+  }, [chatId, isLoading, error]);
 
   useEffect(() => {
     if (chatId) {
@@ -93,6 +94,13 @@ export function ChatLayout({
       window.removeEventListener("resize", checkScreenWidth);
     };
   }, []);
+
+  useEffect(() => {
+    if (!chatId && messages.length < 1) {
+      const id = uuidv4();
+      setChatId(id);
+    }
+  }, [messages]);
 
   return (
     <ResizablePanelGroup
@@ -129,7 +137,7 @@ export function ChatLayout({
         )}
       >
         <Sidebar
-          chatId={chatId}
+          chatParamId={chatId}
           isCollapsed={isCollapsed || isMobile}
           setMessages={setMessages}
         />

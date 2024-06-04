@@ -28,7 +28,7 @@ export default function ChatTopbar({
         </SheetTrigger>
         <SheetContent side="left">
           <Sidebar
-            chatId={chatId}
+            chatParamId={chatId}
             isCollapsed={false}
             setMessages={setMessages}
           />

@@ -1,19 +1,19 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAuth } from "react-oidc-context";
 
 import { ChatLayout } from "@/components/chat/chat-layout";
 import { Loader } from "@/components/ui/loader";
 
 export default function Page({ params }: { params: { id: string } }) {
+  const paramsId = params.id?.[0];
   const authContext = useAuth();
-  const [chatId, setChatId] = useState<string>(params.id);
 
   useEffect(() => {
     if (!authContext.isLoading && !authContext.isAuthenticated) {
-      authContext.signinRedirect();
+      authContext.signinRedirect({ state: window.location.href });
     }
   }, [authContext]);
 
@@ -22,7 +22,7 @@ export default function Page({ params }: { params: { id: string } }) {
       {authContext.isLoading ?
         <Loader /> :
         <ChatLayout
-          chatId={chatId}
+          paramId={paramsId}
           navCollapsedSize={10}
           defaultLayout={[20, 80]}
         />

@@ -9,7 +9,6 @@ import { MoreVertical, SquarePen, Trash2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useLocalStorageData } from "@/app/hooks/useLocalStorageData";
 import {
   Dialog,
   DialogContent,
@@ -28,28 +27,23 @@ import UserSettings from "./user-settings";
 import SidebarSkeleton from "./sidebar-skeleton";
 
 interface SidebarProps {
-  chatId: string;
+  chatParamId: string;
   isCollapsed: boolean;
   setMessages: (messages: Message[]) => void;
 }
 
 export function Sidebar({
-  chatId,
+  chatParamId,
   isCollapsed,
   setMessages,
 }: SidebarProps) {
   const [localChats, setLocalChats] = useState<
     { chatId: string; messages: Message[] }[]
   >([]);
-  const [selectedChatId, setSselectedChatId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    if (chatId) {
-      setSselectedChatId(chatId);
-    }
-
     setLocalChats(getLocalstorageChats());
     const handleStorageChange = () => {
       setLocalChats(getLocalstorageChats());
@@ -77,7 +71,7 @@ export function Sidebar({
       const item = localStorage.getItem(chat);
       return item
         ? { chatId: chat, messages: JSON.parse(item) }
-        : { chatId: "", messages: [] };
+        : { chatId: '', messages: [] };
     });
 
     // Sort chats by the createdAt date of the first message of each chat
@@ -103,13 +97,13 @@ export function Sidebar({
       <div className=" flex flex-col justify-between p-2 max-h-fit overflow-y-auto">
         <Button
           onClick={() => {
-            router.push("/");
+            router.push('/');
             setMessages([]);
           }}
           variant="ghost"
           className="flex justify-between w-full h-14 text-sm xl:text-lg font-normal items-center "
         >
-          <div className="flex gap-3 items-center ">
+          <div className="flex gap-3 items-center">
             <Image
               src="/realpage-logo.png"
               alt="AI"
@@ -122,35 +116,37 @@ export function Sidebar({
         </Button>
 
         <div className="flex flex-col pt-10 gap-2">
-          <p className="pl-4 text-xs text-muted-foreground">Your chats</p>
-          {localChats.length > 0 && (
+          <p className="pl-4 text-sm text-muted-foreground">Your chats</p>
+          {localChats.length && (
             <div>
               {localChats.map(({ chatId, messages }, index) => (
                 <Link
                   key={index}
-                  href={`/chat/${chatId.substr(5)}`}
+                  href={`/chat/${chatId.substring(5)}`}
                   className={cn(
                     {
                       [buttonVariants({ variant: "secondaryLink" })]:
-                        chatId.substring(5) === selectedChatId,
+                        chatId.substring(5) === chatParamId,
                       [buttonVariants({ variant: "ghost" })]:
-                        chatId.substring(5) !== selectedChatId,
+                        chatId.substring(5) !== chatParamId,
                     },
-                    "flex justify-between w-full h-14 text-base font-normal items-center "
+                    "flex justify-between w-full h-14 text-base font-normal items-center px-4 my-2"
                   )}
                 >
                   <div className="flex gap-3 items-center truncate">
                     <div className="flex flex-col">
-                      <span className="text-sm font-normal ">
-                        {messages.length > 0 ? messages[0].content : ""}
-                      </span>
+                      {messages.length && (
+                        <span className="text-sm font-normal ">
+                          {messages[0].content}
+                        </span>
+                      )}
                     </div>
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="ghost"
-                        className="flex justify-end items-center"
+                        className="flex justify-end items-center p-0"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <MoreVertical size={15} className="shrink-0" />
