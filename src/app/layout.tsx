@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 const oidcConfig: AuthProviderProps = {
   authority: "https://www-dev.realpage.com/login/identity",
-  client_id: "RealAssist",
+  client_id: "RealAssistUI",
   redirect_uri: ROOT_PATH,
   response_type: 'code',
   scope: 'openid',

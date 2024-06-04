@@ -13,7 +13,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     if (!authContext.isLoading && !authContext.isAuthenticated) {
-      authContext.signinRedirect({ state: window.location.href });
+      authContext.signinRedirect();
     }
   }, [authContext]);
 

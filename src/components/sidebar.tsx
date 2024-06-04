@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Message } from "ai/react";
-import { MoreHorizontal, SquarePen, Trash2 } from "lucide-react";
+import { MoreVertical, SquarePen, Trash2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "./ui/dialog";
 import {
   DropdownMenu,
@@ -152,10 +153,10 @@ export function Sidebar({
                         className="flex justify-end items-center"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <MoreHorizontal size={15} className="shrink-0" />
+                        <MoreVertical size={15} className="shrink-0" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className=" ">
+                    <DropdownMenuContent>
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button
@@ -175,7 +176,14 @@ export function Sidebar({
                               action cannot be undone.
                             </DialogDescription>
                             <div className="flex justify-end gap-2">
-                              <Button variant="outline">Cancel</Button>
+                              <DialogClose asChild>
+                                <Button
+                                  variant="outline"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  Cancel
+                                </Button>
+                              </DialogClose>
                               <Button
                                 variant="destructive"
                                 onClick={() => handleDeleteChat(chatId)}

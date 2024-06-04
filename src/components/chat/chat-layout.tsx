@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { useAuth } from "react-oidc-context";
 import { useChat } from "ai/react";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
@@ -27,6 +28,7 @@ export function ChatLayout({
   defaultCollapsed,
   navCollapsedSize,
 }: ChatLayoutProps) {
+  const authContext = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
   const [isMobile, setIsMobile] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
@@ -41,14 +43,18 @@ export function ChatLayout({
     handleInputChange,
   } = useChat({
     api: 'api/chat',
+    headers: {
+      Authorization: `Bearer ${authContext.user?.access_token}`
+    },
     onResponse: (response) => {
       if (response) {
         setLoadingSubmit(false);
       }
     },
-    onError: () => {
+    onError: (error) => {
       setLoadingSubmit(false);
-      toast.error("An error occurred. Please try again.");
+      console.log(error);
+      toast.error(`An error occurred. ${error.message}`);
     },
   });
 

@@ -67,6 +67,7 @@ export default function ChatList({
               width={80}
               height={80}
               className="object-contain"
+              priority
             />
             <p className="text-center text-lg text-muted-foreground">
               How can I help you today?
