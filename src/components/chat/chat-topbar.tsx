@@ -12,28 +12,27 @@ import { Sidebar } from "../sidebar";
 import { ModeToggle } from "../mode-toggle";
 
 interface ChatTopbarProps {
-  chatId?: string;
-  messages: Message[];
+  chatId: string;
+  setMessages: (messages: Message[]) => void;
 }
 
 export default function ChatTopbar({
   chatId,
-  messages,
+  setMessages,
 }: ChatTopbarProps) {
-
   return (
     <div className="w-full flex px-4 py-6 items-center justify-between lg:justify-center ">
       <Sheet>
         <SheetTrigger className="lg:hidden">
           <HamburgerMenuIcon className="w-5 h-5" />
         </SheetTrigger>
-        {/* <SheetContent side="left">
+        <SheetContent side="left">
           <Sidebar
-            chatId={chatId || ""}
+            chatId={chatId}
             isCollapsed={false}
-            setMessages={() => { }}
+            setMessages={setMessages}
           />
-        </SheetContent> */}
+        </SheetContent>
         <ModeToggle />
       </Sheet>
     </div>

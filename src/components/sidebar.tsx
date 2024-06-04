@@ -96,7 +96,9 @@ export function Sidebar({
   };
 
   return (
-    <div className="relative justify-between group lg:bg-accent/20 lg:dark:bg-card/35 flex flex-col h-full gap-4 p-2 lg:flex">
+    <div
+      data-collapsed={isCollapsed}
+      className="relative justify-between group lg:bg-accent/20 lg:dark:bg-card/35 flex flex-col h-full gap-4 p-2 lg:flex">
       <div className=" flex flex-col justify-between p-2 max-h-fit overflow-y-auto">
         <Button
           onClick={() => {
@@ -125,7 +127,7 @@ export function Sidebar({
               {localChats.map(({ chatId, messages }, index) => (
                 <Link
                   key={index}
-                  href={`/${chatId.substr(5)}`}
+                  href={`/chat/${chatId.substr(5)}`}
                   className={cn(
                     {
                       [buttonVariants({ variant: "secondaryLink" })]:

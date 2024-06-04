@@ -1,29 +1,15 @@
 "use client";
 
 import { ReactNode } from "react";
-//import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { AuthProvider, AuthProviderProps } from 'react-oidc-context';
 
 import "./globals.scss";
+import { ROOT_PATH } from "@/lib/constants";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] });
-
-/* export const metadata: Metadata = {
-  title: "Ollama UI",
-  description: "Ollama chatbot web interface",
-};
-
-export const viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: 1,
-} */
-
-const ROOT_PATH = "http://localhost:3000";
 
 const oidcConfig: AuthProviderProps = {
   authority: "https://www-dev.realpage.com/login/identity",

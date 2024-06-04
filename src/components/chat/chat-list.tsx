@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, ChangeEvent, RefObject } from "react";
+import { useRef, useEffect, ChangeEvent, RefObject, MouseEvent } from "react";
 import { Message } from "ai/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -23,44 +23,24 @@ export interface ChatListProps {
 
 export default function ChatList({
   messages,
-  handleInputChange,
   isLoading,
   loadingSubmit,
   formRef,
+  handleInputChange,
 }: ChatListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const { userName } = useUserData();
-  const [initialQuestions, setInitialQuestions] = useState<Message[]>([]);
+  const initialQuestions: Message[] =
+    messages.length ? [] : INITIAL_QUESTIONS
+      .map((message) => ({
+        id: "1",
+        role: "user",
+        content: message.content,
+      }));
 
-  const scrollToBottom = () => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  };
-
-  useEffect(() => {
-    if (messages.length === 0) {
-      setInitialQuestions(
-        INITIAL_QUESTIONS
-          .map((message) => {
-            return {
-              id: "1",
-              role: "user",
-              content: message.content,
-            };
-          })
-      );
-    }
-  }, []);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const onClickQuestion = (value: string, e: MouseEvent) => {
+  const onClickQuestion = (e: MouseEvent, value: string) => {
     e.preventDefault();
-
-    handleInputChange({
-      target: { value },
-    } as ChangeEvent<HTMLTextAreaElement>);
+    handleInputChange({ target: { value } } as ChangeEvent<HTMLTextAreaElement>);
 
     setTimeout(() => {
       formRef.current?.dispatchEvent(
@@ -72,17 +52,20 @@ export default function ChatList({
     }, 1);
   };
 
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages]);
+
   if (messages.length === 0) {
     return (
-      <div className="w-full h-full flex justify-center items-center">
-        <div className="relative flex flex-col gap-4 items-center justify-center w-full h-full">
-          <div></div>
-          <div className="flex flex-col gap-4 items-center">
+      <div className="relative w-full h-full flex justify-center">
+        <div className="absolute bottom-0 flex flex-col gap-4 w-full">
+          <div className="flex flex-col items-center mb-8">
             <Image
               src="/realpage-logo.png"
               alt="AI"
-              width={60}
-              height={60}
+              width={80}
+              height={80}
               className="object-contain"
             />
             <p className="text-center text-lg text-muted-foreground">
@@ -90,7 +73,7 @@ export default function ChatList({
             </p>
           </div>
 
-          <div className="absolute bottom-0 w-full px-4 sm:max-w-3xl grid gap-2 sm:grid-cols-2 sm:gap-4 text-sm">
+          <div className="w-full px-4 sm:max-w-3xl grid gap-2 sm:grid-cols-2 sm:gap-4 text-sm">
             {initialQuestions.map((message) => {
               const delay = Math.random() * 0.25;
               return (
@@ -110,7 +93,7 @@ export default function ChatList({
                     type="button"
                     variant="outline"
                     className="sm:text-start px-4 py-8 flex w-full justify-center sm:justify-start items-center text-sm whitespace-pre-wrap"
-                    onClick={(e) => onClickQuestion(message.content, e)}
+                    onClick={(e) => onClickQuestion(e, message.content,)}
                   >
                     {message.content}
                   </Button>
@@ -230,7 +213,7 @@ export default function ChatList({
           </div>
         )}
       </div>
-      <div id="anchor" ref={bottomRef}></div>
+      <div ref={bottomRef}></div>
     </div>
   );
 }

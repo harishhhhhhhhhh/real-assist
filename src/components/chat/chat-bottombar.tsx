@@ -1,19 +1,20 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, KeyboardEvent, ChangeEvent, RefObject } from "react";
-import { ChatRequestOptions } from "ai";
+import { FormEvent, useEffect, useRef, KeyboardEvent, ChangeEvent, RefObject, useState } from "react";
+//import { WebPDFLoader } from "langchain/document_loaders/web/pdf";
 import { SendHorizonal } from "lucide-react";
 import TextareaAutosize from "react-textarea-autosize";
 import { AnimatePresence } from "framer-motion";
 import { StopIcon } from "@radix-ui/react-icons";
 
 import { Button } from "../ui/button";
+//import FilePicker from "../ui/file-picker";
 
 export interface ChatBottombarProps {
   input: string;
   isLoading: boolean;
   formRef: RefObject<HTMLFormElement>;
-  stop: () => void;
+  handleStop: () => void;
   handleInputChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
 }
@@ -22,10 +23,11 @@ export default function ChatBottombar({
   input,
   isLoading,
   formRef,
-  stop,
+  handleStop,
   handleInputChange,
   handleSubmit,
 }: ChatBottombarProps) {
+  //const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const handleKeyPress = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -34,6 +36,29 @@ export default function ChatBottombar({
       handleSubmit(e as unknown as FormEvent<HTMLFormElement>);
     }
   };
+
+  /* useEffect(() => {
+    console.log("Creating Index from the PDF...")
+    const processPdfAsync = async () => {
+      if (selectedFile) {
+        const loader = new WebPDFLoader(
+          selectedFile,
+          { parsedItemSeparator: " " }
+        );
+        const lcDocs = await loader.load()
+        try {
+          //await processDocs(lcDocs)
+          console.log("Done creating Index from the PDF.")
+        } catch (e) {
+          console.log(e)
+          console.log("Error while creating index")
+        } finally {
+        }
+      }
+    }
+    processPdfAsync()
+    // console.log(selectedFile)
+  }, [selectedFile]) */
 
   useEffect(() => {
     if (inputRef.current) {
@@ -71,6 +96,9 @@ export default function ChatBottombar({
                 >
                   <SendHorizonal className="w-5 h-5 " />
                 </Button>
+                {/* <FilePicker
+                  setSelectedFile={setSelectedFile} 
+                /> */}
               </div>
             ) : (
               <div className="flex absolute right-3 items-center">
@@ -81,7 +109,7 @@ export default function ChatBottombar({
                   type="submit"
                   onClick={(e) => {
                     e.preventDefault();
-                    stop();
+                    handleStop();
                   }}
                 >
                   <StopIcon className="w-5 h-5" />

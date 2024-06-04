@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { useChat } from "ai/react";
+import { v4 as uuidv4 } from "uuid";
+import { toast } from "sonner";
 
 import {
   ResizableHandle,
@@ -8,7 +11,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { cn } from "@/lib/utils";
-//import { Sidebar } from "../sidebar";
+import { Sidebar } from "../sidebar";
 import { Chat } from "./chat";
 
 interface ChatLayoutProps {
@@ -21,9 +24,58 @@ interface ChatLayoutProps {
 export function ChatLayout({
   chatId,
   defaultLayout,
+  defaultCollapsed,
   navCollapsedSize,
 }: ChatLayoutProps) {
+  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
   const [isMobile, setIsMobile] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const {
+    messages,
+    input,
+    isLoading,
+    error,
+    setMessages,
+    stop,
+    handleSubmit,
+    handleInputChange,
+  } = useChat({
+    api: 'api/chat',
+    onResponse: (response) => {
+      if (response) {
+        setLoadingSubmit(false);
+      }
+    },
+    onError: () => {
+      setLoadingSubmit(false);
+      toast.error("An error occurred. Please try again.");
+    },
+  });
+
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoadingSubmit(true);
+    setMessages([...messages]);
+    handleSubmit(e);
+  };
+
+  // When starting a new chat, append the messages to the local storage
+  useEffect(() => {
+    if (!isLoading && !error && messages.length > 0) {
+      localStorage.setItem(`chat_${chatId}`, JSON.stringify(messages));
+      // Trigger the storage event to update the sidebar component
+      window.dispatchEvent(new Event("storage"));
+    }
+  }, [messages, chatId, isLoading, error]);
+
+  useEffect(() => {
+    if (chatId) {
+      const item = localStorage.getItem(`chat_${chatId}`);
+      if (item) {
+        setMessages(JSON.parse(item));
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const checkScreenWidth = () => {
@@ -52,12 +104,29 @@ export function ChatLayout({
         collapsible={true}
         minSize={isMobile ? 0 : 15}
         maxSize={isMobile ? 0 : 20}
+        onCollapse={() => {
+          setIsCollapsed(true);
+          document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
+            true
+          )}`;
+        }}
+        onExpand={() => {
+          setIsCollapsed(false);
+          document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
+            false
+          )}`;
+        }}
+        className={cn(
+          isCollapsed
+            ? "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out"
+            : "hidden md:block"
+        )}
       >
-        {/* <Sidebar
+        <Sidebar
           chatId={chatId}
-          isCollapsed={isMobile}
+          isCollapsed={isCollapsed || isMobile}
           setMessages={setMessages}
-        /> */}
+        />
       </ResizablePanel>
       <ResizableHandle className={cn("hidden lg:flex")} withHandle />
       <ResizablePanel
@@ -67,7 +136,18 @@ export function ChatLayout({
         minSize={isMobile ? 0 : 80}
         maxSize={isMobile ? 0 : 85}
       >
-        <Chat chatId={chatId} />
+        <Chat
+          chatId={chatId}
+          messages={messages}
+          isLoading={isLoading}
+          loadingSubmit={loadingSubmit}
+          input={input}
+          error={error}
+          setMessages={setMessages}
+          handleStop={stop}
+          handleInputChange={handleInputChange}
+          handleSubmit={onSubmit}
+        />
       </ResizablePanel>
     </ResizablePanelGroup>
   );
