@@ -20,7 +20,7 @@ export default function Page({ params }: { params: { id: string } }) {
   return (
     <main className="flex h-[calc(100dvh)] flex-col items-center ">
       {authContext.isLoading ?
-        <Loader /> :
+        <Loader width={4} height={4}/> :
         <ChatLayout
           paramId={paramsId}
           navCollapsedSize={10}
