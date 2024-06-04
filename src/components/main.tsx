@@ -82,12 +82,18 @@ export default function Main({
   }, [messages]); */
 
   // When starting a new chat, append the messages to the local storage
+  const apicall = async () => {
+    const res = await fetch('http://localhost:3000/api/db', {
+      method: 'GET',
+    });
+  }
   useEffect(() => {
     if (!isLoading && !error && messages.length > 0) {
       localStorage.setItem(`chat_${chatId}`, JSON.stringify(messages));
       // Trigger the storage event to update the sidebar component
       window.dispatchEvent(new Event("storage"));
     }
+    // apicall();
   }, [messages, chatId, isLoading, error]);
 
   useEffect(() => {

@@ -12,6 +12,10 @@ const nextConfig = {
         perf_hooks: false,
       };
     }
+    config.module.rules.push({
+      test: /\.node$/,
+      use: 'file-loader',
+    });
 
     return config
   },
