@@ -2,8 +2,7 @@ import { StreamingTextResponse, Message } from "ai";
 import { ChatOllama } from "@langchain/community/chat_models/ollama";
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
 import { BytesOutputParser } from "@langchain/core/output_parsers";
-import { RetrievalQAChain } from "langchain/chains";
-
+import { createRetrievalChain } from "langchain/chains/retrieval";
 
 
 import { indexDocuments } from '../../../scripts/indexDocuments';
@@ -38,20 +37,12 @@ export async function POST(req: Request) {
 
   const parser = new BytesOutputParser();
 
-  const chain = RetrievalQAChain.fromLLM(
-    model,
-    vectorStore.asRetriever(),
-    {}
-  )
 
-  // const stream = await model
-  //   .pipe(parser)
-  //   .stream(relevantVectors.map((vector) => new AIMessage(vector.pageContent)));
 
-  const stream = await chain.stream({
-    chat_history: messages,
-    lastHumanMessageContent,
-  })
+  const stream = await model
+    .pipe(parser)
+    .stream(relevantVectors.map((vector) => new AIMessage(vector.pageContent)));
+
 
   return new StreamingTextResponse(stream);
 }
