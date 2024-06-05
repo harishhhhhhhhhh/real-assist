@@ -1,20 +1,14 @@
 export const INITIAL_QUESTIONS = [
   {
-    content: "What is the capital of France?",
+    content: "What is India payroll link?",
   },
   {
-    content: "How many planets are there in our solar system?",
+    content: "What is the Cost Center for Internet expense reimbursement?",
   },
   {
-    content: "Who painted the Mona Lisa?",
+    content: "What is security goal weightage?",
   },
   {
-    content: "What is the square root of 144?",
-  },
-  {
-    content: "What is the tallest mountain in the world?",
-  },
-  {
-    content: "Who discovered penicillin?",
+    content: "Do we have any global holidays this month?",
   },
 ];

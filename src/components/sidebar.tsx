@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Message } from "ai/react";
-import { MoreVertical, SquarePen, Trash2 } from "lucide-react";
+import { MessagesSquare, MoreVertical, SquarePen, Trash2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -87,6 +87,9 @@ export function Sidebar({
 
   const handleDeleteChat = (chatId: string) => {
     localStorage.removeItem(chatId);
+    /* if (chatParamId === chatId.substring(5)) {
+      router.push('/');
+    } */
     setLocalChats(getLocalstorageChats());
   };
 
@@ -115,9 +118,10 @@ export function Sidebar({
           <SquarePen size={18} className="shrink-0 w-4 h-4" />
         </Button>
 
-        <div className="flex flex-col pt-10 gap-2">
-          <p className="pl-4 text-sm text-muted-foreground">Your chats</p>
-          {localChats.length && (
+        {localChats.length ? (
+          <div className="flex flex-col pt-10 gap-2">
+            <p className="pl-4 text-sm text-muted-foreground">Your chats</p>
+
             <div>
               {localChats.map(({ chatId, messages }, index) => (
                 <Link
@@ -193,11 +197,17 @@ export function Sidebar({
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </Link>
-              ))}
+              ))
+              }
             </div>
-          )}
-          {isLoading && <SidebarSkeleton />}
-        </div>
+            {isLoading && <SidebarSkeleton />}
+          </div>
+        ) :
+          <div className="flex flex-col justify-center items-center h-screen">
+            <MessagesSquare size={34} className=" text-muted-foreground" />
+            <p className="text-base text-muted-foreground">No Chats available</p>
+          </div>
+        }
       </div>
 
       <div className="justify-end px-2 py-2 w-full border-t">

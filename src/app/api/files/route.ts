@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { readdirSync, statSync } from "fs";
 import { resolve } from "path";
 
-import { FileInfo } from "@/app/models/FileInfo";
+import { FileInfo } from "../../../models/FileInfo";
 
 const DIRECTORY_PATH = 'src/data';
 
@@ -24,8 +24,8 @@ export async function GET(req: Request) {
 
 /* export async function POST(req: Request) {
 
-}
+} */
 
 export async function DELETE(req: Request) {
 
-} */
+}
