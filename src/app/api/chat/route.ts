@@ -72,6 +72,7 @@ export async function POST(req: Request) {
       stream.pipeThrough(createStreamDataTransformer()),
     );
   } catch (e: any) {
+    console.log("Error:::",e);
     return Response.json({ error: e.message }, { status: e.status ?? 500 });
   }
 }

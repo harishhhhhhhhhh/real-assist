@@ -1,0 +1,62 @@
+services:
+  # Ollama and API
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - 11434:11434
+    volumes:
+      - ollama:/root/.ollama
+
+  # Pull, Ollama model to use
+  ollama-models-pull:
+    image: curlimages/curl:latest
+    command: >-
+      http://ollama:11434/api/pull -d '{"name": "mistral"}'
+    depends_on:
+      - ollama
+
+  # Pull, Ollama embedding to use
+  ollama-embeddings-pull:
+    image: curlimages/curl:latest
+    command: >-
+      http://ollama:11434/api/pull -d '{"name": "mxbai-embed-large"}'
+    depends_on:
+      - ollama
+  
+  # Mongo database
+  mongodb_database:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_database:/data/db
+    depends_on:
+      - ollama
+
+  # NextJs web application UI
+  nextjs-ui:
+    build:
+      context: ./
+      dockerfile: dev.DockerFile
+    environment:
+      NEXT_PUBLIC_OLLAMA_URL: http://ollama:11434
+      NEXT_PUBLIC_OLLAMA_MODEL: mistral
+    restart: always
+    ports:
+      - 3000:3000
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+    depends_on:
+      - ollama
+      - ollama-models-pull
+      - ollama-embeddings-pull
+      - mongodb_database
+
+volumes:
+  ollama:
+  mongodb_database:
+  nextjs-ui:
