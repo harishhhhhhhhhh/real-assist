@@ -5,11 +5,11 @@ import { formatDocumentsAsString } from 'langchain/util/document';
 
 import { StreamingTextResponse, Message, createStreamDataTransformer } from "ai";
 import { ChatOllama } from "@langchain/community/chat_models/ollama";
-import { AIMessage, HumanMessage } from "@langchain/core/messages";
-import { BytesOutputParser } from "@langchain/core/output_parsers";
+// import { AIMessage, HumanMessage } from "@langchain/core/messages";
+// import { BytesOutputParser } from "@langchain/core/output_parsers";
 
 import { OLLAMA_MODEL, OLLAMA_URL } from "@/lib/constants";
-import processDocs from '@/lib/processDocs';
+import processDocsStore from '@/lib/processDocs';
 
 export const dynamic = "force-dynamic";
 
@@ -21,14 +21,22 @@ const formatMessage = (message: Message) => {
   return `${message.role}: ${message.content}`;
 };
 
-const TEMPLATE = `Answer the user's questions based only on the following context. If the answer is not in the context, reply politely that you do not have that information available.:
-==============================
-Context: {context}
-==============================
-Current conversation: {chat_history}
+const TEMPLATE = `You are a chatbot for ansering employee questions. 
 
-user: {question}
-assistant:`;
+Reference: {context}
+
+Question: {question}
+
+Use the reference to answer the question.
+
+The reference above is only fractions of '<>'.
+
+Be informative, gentle, and formal.
+
+Don't say 'Based on' while answering
+
+If you can't answer the question with the reference, just say like 
+'I couldn't find the right answer please get in touch with HR Team'.`;
 
 export async function POST(req: Request) {
   try {
@@ -40,8 +48,9 @@ export async function POST(req: Request) {
 
     const prompt = PromptTemplate.fromTemplate(TEMPLATE);
 
-    const docs = await processDocs();
+    const vectorStore = await processDocsStore();
 
+    const relevantVectors = await vectorStore.similaritySearch(currentMessageContent, 3);
     const model = new ChatOllama({
       baseUrl: OLLAMA_URL,
       model: OLLAMA_MODEL,
@@ -53,8 +62,8 @@ export async function POST(req: Request) {
     const chain = RunnableSequence.from([
       {
         question: (input) => input.question,
-        chat_history: (input) => input.chat_history,
-        context: () => formatDocumentsAsString(docs),
+        //chat_history: (input) => input.chat_history,
+        context: () => formatDocumentsAsString(relevantVectors),
       },
       prompt,
       model,
@@ -72,7 +81,7 @@ export async function POST(req: Request) {
       stream.pipeThrough(createStreamDataTransformer()),
     );
   } catch (e: any) {
-    console.log("Error:::",e);
+    console.log("Error:::", e);
     return Response.json({ error: e.message }, { status: e.status ?? 500 });
   }
 }
