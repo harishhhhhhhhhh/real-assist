@@ -1,4 +1,4 @@
-import { useRef, useEffect, ChangeEvent, RefObject, MouseEvent } from "react";
+import { useRef, useEffect, ChangeEvent, RefObject, MouseEvent, useState } from "react";
 import { Message } from "ai/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -6,6 +6,7 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { cn } from "@/lib/utils";
+import { Question } from "@/models/Question";
 import { INITIAL_QUESTIONS } from "@/utils/initial-questions";
 import { useUserData } from "@/app/hooks/useUserData";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -33,18 +34,13 @@ export default function ChatList({
 }: ChatListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const { userName } = useUserData();
-  const initialQuestions: Message[] =
-    messages.length ? [] : INITIAL_QUESTIONS
-      .map((message) => ({
-        id: "1",
-        role: "user",
-        content: message.content,
-      }));
+  const [questions, setQuestions] = useState<Question[]>([]);
 
-  const onClickQuestion = (e: MouseEvent, value: string) => {
+  const onClickQuestion = (e: MouseEvent, message: Question) => {
     e.preventDefault();
-    handleInputChange({ target: { value } } as ChangeEvent<HTMLTextAreaElement>);
-
+    const messageContent = message.questions ? `@${message.content}`: message.content;
+    setQuestions(message.questions || []);
+    handleInputChange({ target: { value: messageContent } } as ChangeEvent<HTMLTextAreaElement>);
     setTimeout(() => {
       formRef.current?.dispatchEvent(
         new Event("submit", {
@@ -52,7 +48,7 @@ export default function ChatList({
           bubbles: true,
         })
       );
-    }, 1);
+    });
   };
 
   useEffect(() => {
@@ -81,11 +77,12 @@ export default function ChatList({
             </p>
           </div>
 
-          <div className="w-full px-4 sm:max-w-3xl grid gap-2 sm:grid-cols-2 sm:gap-4 text-sm">
-            {initialQuestions.map((message) => {
+          <div className="w-full px-4 sm:max-w-3xl grid gap-2 sm:grid-cols-3 sm:gap-4 text-sm">
+            {INITIAL_QUESTIONS.map((question) => {
               const delay = Math.random() * 0.25;
               return (
                 <motion.div
+                  key={question.content}
                   initial={{ opacity: 0, scale: 1, y: 10, x: 0 }}
                   animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
                   exit={{ opacity: 0, scale: 1, y: 10, x: 0 }}
@@ -94,16 +91,14 @@ export default function ChatList({
                     scale: { duration: 0.1, delay },
                     y: { type: "spring", stiffness: 100, damping: 10, delay },
                   }}
-                  key={message.content}
                 >
                   <Button
-                    key={message.content}
                     type="button"
                     variant="outline"
                     className="sm:text-start px-4 py-8 flex w-full justify-center sm:justify-start items-center text-sm whitespace-pre-wrap"
-                    onClick={(e) => onClickQuestion(e, message.content,)}
+                    onClick={(e) => onClickQuestion(e, question)}
                   >
-                    {message.content}
+                    {question.content}
                   </Button>
                 </motion.div>
               );
@@ -200,6 +195,48 @@ export default function ChatList({
             </div>
           </motion.div>
         ))}
+
+        {(!loadingSubmit && questions.length > 0) && (
+          <div className="flex pl-4 pb-4 gap-2 items-start">
+            <Avatar className="flex justify-start items-center rounded-full border">
+              <AvatarImage
+                src="/realpage-logo.png"
+                alt="AI"
+                width={6}
+                height={6}
+                className="object-contain"
+              />
+            </Avatar>
+            <div className="w-1/2 grid grid-cols-1 gap-2 text-sm">
+              {questions.map(question => {
+                const delay = Math.random() * 0.25;
+                return (
+                  <motion.div
+                    key={question.content}
+                    initial={{ opacity: 0, scale: 1, y: 10, x: 0 }}
+                    animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+                    exit={{ opacity: 0, scale: 1, y: 10, x: 0 }}
+                    transition={{
+                      opacity: { duration: 0.1, delay },
+                      scale: { duration: 0.1, delay },
+                      y: { type: "spring", stiffness: 100, damping: 10, delay },
+                    }}
+                  >
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="sm:text-start px-4 py-6 flex justify-center sm:justify-start items-center text-sm whitespace-pre-wrap"
+                      onClick={(e) => onClickQuestion(e, question)}
+                    >
+                      {question.content}
+                    </Button>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+        
         {loadingSubmit && (
           <div className="flex pl-4 pb-4 gap-2 items-center">
             <Avatar className="flex justify-start items-center rounded-full border">

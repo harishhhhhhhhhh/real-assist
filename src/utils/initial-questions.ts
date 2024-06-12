@@ -1,14 +1,64 @@
-export const INITIAL_QUESTIONS = [
+import { Question } from "@/models/Question";
+
+export const INITIAL_QUESTIONS: Question[]  = [
   {
-    content: "What is India payroll link?",
+    role: 'user',
+    content: "USA",
+    questions: [{
+      role: 'user',
+      content: "Employee Onboarding",
+    }, {
+      role: 'user',
+      content: "Employee Exit",
+    }, {
+      role: 'user',
+      content: "Income Tax",
+    }, {
+      role: 'user',
+      content: "ADP Payroll Setup",
+    }, {
+      role: 'user',
+      content: "Medical Insurance",
+    }]
   },
   {
-    content: "What is the Cost Center for Internet expense reimbursement?",
+    role: 'user',
+    content: "India",
+    questions: [{
+      role: 'user',
+      content: "Employee Onboarding",
+    }, {
+      role: 'user',
+      content: "Employee Exit",
+    }, {
+      role: 'user',
+      content: "Income Tax",
+    }, {
+      role: 'user',
+      content: "ADP Payroll Setup",
+    }, {
+      role: 'user',
+      content: "Medical Insurance",
+    }]
   },
   {
-    content: "What is security goal weightage?",
-  },
-  {
-    content: "Do we have any global holidays this month?",
+    role: 'user',
+    content: "Philippines",
+    questions: [{
+      role: 'user',
+      content: "Employee Onboarding",
+    }, {
+      role: 'user',
+      content: "Employee Exit",
+    }, {
+      role: 'user',
+      content: "Income Tax",
+    }, {
+      role: 'user',
+      content: "ADP Payroll Setup",
+    }, {
+      role: 'user',
+      content: "Medical Insurance",
+    }]
   },
 ];

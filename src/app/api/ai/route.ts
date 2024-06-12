@@ -3,7 +3,7 @@ import { HttpResponseOutputParser } from 'langchain/output_parsers';
 import { RunnableSequence } from '@langchain/core/runnables'
 import { formatDocumentsAsString } from 'langchain/util/document';
 
-import { StreamingTextResponse, Message, createStreamDataTransformer } from "ai";
+import { StreamingTextResponse, Message, createStreamDataTransformer, AIStream } from "ai";
 import { ChatOllama } from "@langchain/community/chat_models/ollama";
 //import { AIMessage, HumanMessage } from "@langchain/core/messages";
 // import { BytesOutputParser } from "@langchain/core/output_parsers";
@@ -44,7 +44,14 @@ export async function POST(req: Request) {
 
     const formattedPreviousMessages = messages.slice(0, -1).map(formatMessage);
 
-    const currentMessage= messages[messages.length - 1];
+    const currentMessage = messages[messages.length - 1];
+
+    if (currentMessage.content.startsWith('@')) {
+      const response = new Response(null, {status: 204})
+      const stream = AIStream(response);
+      // Respond with the stream
+      return new StreamingTextResponse(stream);
+    }
 
     const prompt = PromptTemplate.fromTemplate(TEMPLATE);
 
