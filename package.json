@@ -20,6 +20,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.4",
     "ai": "^3.0.23",
+    "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "encoding": "^0.1.13",
@@ -45,8 +46,7 @@
     "sharp": "^0.33.4",
     "sonner": "^1.4.0",
     "tailwind-merge": "^2.2.1",
-    "tailwindcss-animate": "^1.0.7",
-    "uuid": "^9.0.1"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.6",
@@ -61,8 +61,5 @@
     "prisma": "^5.9.1",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
-  },
-  "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   }
 }

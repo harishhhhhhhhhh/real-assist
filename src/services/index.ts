@@ -1,41 +1,63 @@
+import axios from "axios";
 import { Message } from "ai";
 
-import { Conversation } from "@/models/Conversation";
+import { Chat } from "@/models/Chat";
 
-const getChatsListService = () => {
-    return fetch('/api/chat', {
-        method: 'GET'
-    }).then(async response => await response.json());
-}
+const axiosInstance = axios.create({
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
 
-const createChatDataService = (messages: Conversation[]) => {
-    return fetch(`/api/chat`, {
-        method: 'POST',
-        body: JSON.stringify(messages),
-    }).then(async response => await response.json())
+const setAuthToken = (token: string) => {
+    axiosInstance.interceptors.request.use(
+        config => {
+            if (token) {
+                config.headers['Authorization'] = `Bearer ${token}`;
+            }
+            return config;
+        },
+        error => {
+            return Promise.reject(error);
+        },
+    );
 };
 
-const getChatDataService = (chatId: string) => {
-    return fetch(`/api/chat/${chatId}`, { method: 'GET' })
-        .then(async response => await response.json());
+export type MongoMessage = Omit<Message, 'id'> & { id?: string };
+
+const getChatsListService = (): Promise<Chat[]> => {
+    return axiosInstance.get('/api/chat')
+        .then(response => response.data);
 }
 
-const deleteChatDataService = (chatId: string) => {
-    return fetch(`/api/chat/${chatId}`, { method: 'DELETE' })
-        .then(async response => await response.json())
+const createChatDataService = (messages: MongoMessage[]): Promise<Chat> => {
+    return axiosInstance.post(`/api/chat`, messages)
+        .then(response => response.data);
 };
 
-const createConversationDataService = (chatId: string, message: Conversation) => {
-    return fetch(`/api/chat/${chatId}/conversation`, {
-        method: 'POST',
-        body: JSON.stringify(message),
-    }).then(async response => await response.json())
+const getChatDataService = (chatId: string): Promise<Chat> => {
+    return axiosInstance.get(`/api/chat/${chatId}`)
+        .then(response => response.data);
+}
+
+const deleteChatDataService = (chatId: string): Promise<void> => {
+    return axiosInstance.delete(`/api/chat/${chatId}`)
+        .then(response => response.data);
+};
+
+const createMessageDataService = (
+    chatId: string,
+    message: MongoMessage,
+): Promise<Message> => {
+    return axiosInstance.post(`/api/chat/${chatId}/message`, message)
+        .then(response => response.data);
 };
 
 export {
+    setAuthToken,
     getChatsListService,
     getChatDataService,
     createChatDataService,
     deleteChatDataService,
-    createConversationDataService,
+    createMessageDataService,
 }

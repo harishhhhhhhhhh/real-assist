@@ -1,17 +1,16 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 import prisma from '@/lib/prisma';
-import { ApiRequest } from '@/models/ApiRequest';
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: ApiRequest) {
+export async function GET(req: NextRequest) {
   const result = await prisma.chat.findMany({
     where: {
-      userId:  req.userId,
+      userId:  Number(req.headers.get('userId')),
     },
     include: {
-      conversation: {
+      messages: {
         take: 1,
       },
     },
@@ -19,14 +18,14 @@ export async function GET(req: ApiRequest) {
   return NextResponse.json(result, { status: 200 })
 }
 
-export async function POST(req: ApiRequest) {
-  const conversations = await req.json();
+export async function POST(req: NextRequest) {
+  const messages = await req.json();
   const result = await prisma.chat.create({
     data: {
-      userId: req.userId,
-      conversation: {
+      userId: Number(req.headers.get('userId')),
+      messages: {
         createMany: {
-          data: conversations
+          data: messages
         }
       }
     },

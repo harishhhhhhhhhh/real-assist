@@ -13,10 +13,10 @@ datasource db {
 model chat {
     id           String         @id @default(auto()) @map("_id") @db.ObjectId
     userId       Int
-    conversation conversation[]
+    messages message[]
 }
 
-model conversation {
+model message {
     id        String   @id @default(auto()) @map("_id") @db.ObjectId
     role      String
     content   String

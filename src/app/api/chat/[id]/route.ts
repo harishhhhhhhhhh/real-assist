@@ -1,33 +1,33 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 import prisma from '@/lib/prisma';
-import { ApiRequest } from '@/models/ApiRequest';
 
 export const dynamic = "force-dynamic";
 
 export async function GET(
-  req: ApiRequest,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const result = await prisma.chat.findUnique({
     where: {
       id: params.id,
-      userId: req.userId,
+      userId: Number(req.headers.get('userId')),
     },
     include: {
-      conversation: true,
+      messages: true,
     },
   });
   return NextResponse.json(result, { status: 200 })
 }
 
 export async function DELETE(
-  req: ApiRequest,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const result = await prisma.chat.delete({
     where: {
       id: params.id,
+      userId: Number(req.headers.get('userId')),
     },
   });
   return NextResponse.json(result, { status: 200 })

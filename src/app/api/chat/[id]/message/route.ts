@@ -1,16 +1,15 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 import prisma from '@/lib/prisma';
-import { ApiRequest } from '@/models/ApiRequest';
 
 export const dynamic = "force-dynamic";
 
 export async function POST
-  (req: ApiRequest,
+  (req: NextRequest,
     { params }: { params: { id: string } }
   ) {
   const { role, content } = await req.json();
-  const result = await prisma.conversation.create({
+  const result = await prisma.message.create({
     data: {
       chatId: params.id,
       role,

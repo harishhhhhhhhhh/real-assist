@@ -1,7 +1,7 @@
-import { Conversation } from "./Conversation";
+import { Message } from "ai";
 
 export interface Chat {
     id: string;
     userId: number;
-    conversation: Conversation[];
+    messages: Message[];
 }

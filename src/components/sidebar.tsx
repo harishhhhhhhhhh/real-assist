@@ -84,7 +84,13 @@ export function Sidebar({
 
   const handleDeleteChat = (chatId: string) => {
     deleteChatDataService(chatId)
-      .then(() => getChatsList());
+      .then(() => {
+        if (chatId === chatParamId) {
+          router.push('/');
+        } else {
+          getChatsList();
+        }
+      });
   };
 
   useEffect(() => {
@@ -100,7 +106,7 @@ export function Sidebar({
         <Button
           onClick={() => {
             router.push('/');
-            setMessages([]);
+            //setMessages([]);
           }}
           variant="ghost"
           className="flex justify-between w-full h-14 text-sm xl:text-lg font-normal items-center "
@@ -126,7 +132,7 @@ export function Sidebar({
                 <p className="pl-4 text-sm text-muted-foreground">Your chats</p>
 
                 <div>
-                  {localChats.map(({ id, conversation }) => (
+                  {localChats.map(({ id, messages }) => (
                     <Link
                       key={id}
                       href={`/chat/${id}`}
@@ -142,11 +148,9 @@ export function Sidebar({
                     >
                       <div className="flex gap-3 items-center truncate">
                         <div className="flex flex-col">
-                          {conversation.length && (
-                            <span className="text-sm font-normal ">
-                              {conversation[0].content}
-                            </span>
-                          )}
+                          <span className="text-sm font-normal ">
+                            {messages.length ? messages[0].content : 'New Chat'}
+                          </span>
                         </div>
                       </div>
                       <DropdownMenu>

@@ -3,7 +3,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import { useChat } from "ai/react";
-import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 
 import {
@@ -11,7 +10,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { createConversationDataService, getChatDataService } from "@/services";
+import { createChatDataService, createMessageDataService, getChatDataService } from "@/services";
 import { cn } from "@/lib/utils";
 import { Sidebar } from "../sidebar";
 import { Chat } from "./chat";
@@ -29,7 +28,6 @@ export function ChatLayout({
   defaultCollapsed,
   navCollapsedSize,
 }: ChatLayoutProps) {
-  const authContext = useAuth();
   const [chatId, setChatId] = useState<string>(paramId);
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
   const [isMobile, setIsMobile] = useState(false);
@@ -44,21 +42,23 @@ export function ChatLayout({
     handleSubmit,
     handleInputChange,
   } = useChat({
+    key: 'real-assist',
     api: '/api/ai',
     onResponse: (response) => {
       if (response) {
         setLoadingSubmit(false);
       }
     },
-    onFinish: (message) =>  {
-      createConversationDataService(chatId, {
-        role: 'assistant',
-        content: message.content
-      })
+    onFinish: (message) => {
+      if (chatId) {
+        createMessageDataService(chatId, {
+          role: 'assistant',
+          content: message.content
+        })
+      }
     },
     onError: (error) => {
       setLoadingSubmit(false);
-      console.log(error);
       toast.error(`An error occurred. ${error.message}`);
     },
   });
@@ -67,21 +67,25 @@ export function ChatLayout({
     e.preventDefault();
     setLoadingSubmit(true);
     setMessages([...messages]);
-    createConversationDataService(chatId, {
-      role: 'user',
-      content: (e.target as HTMLInputElement).value
-    })
+    if (chatId) {
+      createMessageDataService(chatId, {
+        role: 'user',
+        content: (e.target as HTMLInputElement).value
+      })
+    }
     handleSubmit(e);
   };
 
-  // When starting a new chat, append the messages to the local storage
-  /* useEffect(() => {
-    if (!isLoading && !error && chatId && messages.length > 0) {
-      localStorage.setItem(`chat_${chatId}`, JSON.stringify(messages));
-      // Trigger the storage event to update the sidebar component
-      window.dispatchEvent(new Event("storage"));
+  useEffect(() => {
+    if (!isLoading && !error && !chatId && messages.length) {
+      const mongoMessages = messages.map(item => ({
+        role: item.role,
+        content: item.content,
+      }));
+      createChatDataService(mongoMessages)
+        .then(data => setChatId(data.id));
     }
-  }, [chatId, isLoading, error]); */
+  }, [isLoading, error, chatId, messages]);
 
   useEffect(() => {
     const checkScreenWidth = () => {
@@ -94,17 +98,11 @@ export function ChatLayout({
     };
   }, []);
 
-  /* useEffect(() => {
-    if (!chatId && messages.length < 1) {
-      const id = uuidv4();
-      setChatId(id);
-    }
-  }, [messages]); */
-
-
   const getChatData = (id: string) => {
     getChatDataService(id)
-      .then(data => setMessages(data.conversation));
+      .then(data => {
+        setMessages(data.messages)
+      });
   }
 
   useEffect(() => {

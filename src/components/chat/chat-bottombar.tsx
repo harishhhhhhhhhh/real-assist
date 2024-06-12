@@ -1,17 +1,14 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, KeyboardEvent, ChangeEvent, RefObject, useState } from "react";
-//import { WebPDFLoader } from "langchain/document_loaders/web/pdf";
+import { FormEvent, useEffect, useRef, KeyboardEvent, ChangeEvent, RefObject } from "react";
 import { SendHorizonal } from "lucide-react";
 import TextareaAutosize from "react-textarea-autosize";
 import { AnimatePresence } from "framer-motion";
 import { StopIcon } from "@radix-ui/react-icons";
 
 import { Button } from "../ui/button";
-//import FilePicker from "../ui/file-picker";
 
 export interface ChatBottombarProps {
-  chatId: string;
   input: string;
   isLoading: boolean;
   formRef: RefObject<HTMLFormElement>;
@@ -21,7 +18,6 @@ export interface ChatBottombarProps {
 }
 
 export default function ChatBottombar({
-  chatId,
   input,
   isLoading,
   formRef,
@@ -29,15 +25,11 @@ export default function ChatBottombar({
   handleInputChange,
   handleSubmit,
 }: ChatBottombarProps) {
-  //const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const handleKeyPress = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      /* if(chatId){
-
-      } */
       handleSubmit(e as unknown as FormEvent<HTMLFormElement>);
     }
   };

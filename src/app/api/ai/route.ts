@@ -29,7 +29,7 @@ Question: {question}
 
 Use the reference to answer the question.
 
-The reference above is only fractions of '<>'.
+The question is only fraction of above reference.
 
 Be informative, gentle, and formal.
 
@@ -82,7 +82,6 @@ export async function POST(req: Request) {
       stream.pipeThrough(createStreamDataTransformer()),
     );
   } catch (e: any) {
-    console.log("Error:::", e);
     return Response.json({ error: e.message }, { status: e.status ?? 500 });
   }
 }

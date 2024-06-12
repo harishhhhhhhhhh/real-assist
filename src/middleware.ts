@@ -2,12 +2,11 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createRemoteJWKSet, jwtVerify, errors } from "jose";
 
-import { ApiRequest } from "./models/ApiRequest";
 import { UNIFIED_LOGIN_AUTHORITY } from "./lib/constants";
 
 const JWKS = createRemoteJWKSet(new URL(`${UNIFIED_LOGIN_AUTHORITY}/.well-known/openid-configuration/jwks`));
 
-export async function middleware(request: ApiRequest) {
+export async function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers)
   const authHeader = requestHeaders.get('Authorization');
   const token = authHeader?.split(' ')[1];
@@ -25,8 +24,12 @@ export async function middleware(request: ApiRequest) {
           }
           throw error
         })
-      request.userId = payload.userpartyid as number;
-      return NextResponse.next({ request});
+      requestHeaders.set('userId', `${payload.userPartyId}`);
+      return NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      });
     } catch (error) {
       return NextResponse.json('Unauthorized', { status: 401 })
     }
