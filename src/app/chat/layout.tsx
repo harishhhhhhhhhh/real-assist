@@ -95,18 +95,6 @@ export default function DashboardLayout({
                         maxSize={isMobile ? 0 : 85}
                     >
                         {children}
-                        {/* <Chat
-                            chatId={chatId}
-                            messages={messages}
-                            isLoading={isLoading}
-                            loadingSubmit={loadingSubmit}
-                            input={input}
-                            error={error}
-                            setMessages={setMessages}
-                            handleStop={stop}
-                            handleInputChange={handleInputChange}
-                            handleSubmit={onSubmit}
-                            /> */}
                     </ResizablePanel>
                 </ResizablePanelGroup>
             }

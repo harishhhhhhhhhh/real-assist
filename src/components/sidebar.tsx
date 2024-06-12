@@ -35,10 +35,10 @@ interface SidebarProps {
 export function Sidebar({ isCollapsed }: SidebarProps) {
   const router = useRouter();
   const params = useParams();
+  const refreshChatId = '/chat/123456c1234c12345e123456';
   const chatParamId = params.id?.[0];
   const [localChats, setLocalChats] = useState<Chat[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
   const getChatsList = () => {
     setIsLoading(true);
     getChatsService()
@@ -50,7 +50,7 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
     deleteChatDataService(chatId)
       .then(() => {
         if (chatId === chatParamId) {
-          router.push('/');
+          router.push(refreshChatId);
         } else {
           getChatsList();
         }
@@ -60,7 +60,7 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
   const handleDeleteAllChats = () => {
     deleteChatsService()
       .then(() => {
-        router.push('/');
+        router.push(refreshChatId);
         getChatsList();
       });
   };
@@ -79,7 +79,7 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
       className="relative justify-between group lg:bg-accent/20 lg:dark:bg-card/35 flex flex-col h-full gap-4 p-2 lg:flex">
       <div className=" flex flex-col justify-between p-2 max-h-fit overflow-y-auto">
         <Button
-          onClick={() => router.push('/')}
+          onClick={() => router.push(refreshChatId)}
           variant="ghost"
           className="flex justify-between w-full h-14 text-sm xl:text-lg font-normal items-center "
         >

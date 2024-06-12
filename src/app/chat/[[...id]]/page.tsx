@@ -13,7 +13,7 @@ import { createChatDataService, createMessageDataService, getChatDataService } f
 export default function ChatPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const chatParamId = params.id?.[0];
-  //const [chatId, setChatId] = useState<string>(chatParamId);
+  const [chatId, setChatId] = useState<string>(chatParamId);
   const formRef = useRef<HTMLFormElement>(null);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [chatLoading, setChatLoading] = useState(false);
@@ -35,8 +35,8 @@ export default function ChatPage({ params }: { params: { id: string } }) {
       }
     },
     onFinish: (message) => {
-      if (chatParamId) {
-        createMessageDataService(chatParamId, {
+      if (chatId) {
+        createMessageDataService(chatId, {
           role: 'assistant',
           content: message.content
         })
@@ -52,8 +52,8 @@ export default function ChatPage({ params }: { params: { id: string } }) {
     e.preventDefault();
     setLoadingSubmit(true);
     setMessages([...messages]);
-    if (chatParamId) {
-      createMessageDataService(chatParamId, {
+    if (chatId) {
+      createMessageDataService(chatId, {
         role: 'user',
         content: input
       })
@@ -62,7 +62,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
   };
 
   useEffect(() => {
-    if (!isLoading && !error && !chatParamId && messages.length) {
+    if (!isLoading && !error && !chatId && messages.length) {
       const mongoMessages = messages.map(item => ({
         role: item.role,
         content: item.content,
@@ -70,16 +70,16 @@ export default function ChatPage({ params }: { params: { id: string } }) {
       createChatDataService(mongoMessages)
         .then(data => {
           window.dispatchEvent(new Event("storage"));
-          router.push(`/chat/${data.id}`);
+          setChatId(data.id);
       });
       
     }
-  }, [isLoading, chatParamId, error, messages]);
+  }, [isLoading, chatId, error, messages]);
 
   useEffect(() => {
-    if (chatParamId) {
+    if (chatId) {
       setChatLoading(true);
-      getChatDataService(chatParamId)
+      getChatDataService(chatId)
         .then(data => setMessages(data.messages))
         .catch(() => router.replace('/'))
         .finally(() => setChatLoading(false));
