@@ -26,6 +26,7 @@ const AvatarImage = forwardRef<
 >(({ className, ...props }, ref) => (
   <Image
     ref={ref}
+    alt="image"
     className={cn("aspect-square h-full w-full", className)}
     {...props}
   />

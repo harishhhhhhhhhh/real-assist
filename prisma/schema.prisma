@@ -1,0 +1,26 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mongodb"
+    url      = env("MONGODB_URL")
+}
+
+model chat {
+    id           String         @id @default(auto()) @map("_id") @db.ObjectId
+    userId       Int
+    conversation conversation[]
+}
+
+model conversation {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    role      String
+    content   String
+    chat      chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+    chatId    String   @db.ObjectId
+    createdAt DateTime @default(now())
+}

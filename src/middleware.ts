@@ -1,16 +1,32 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import { createRemoteJWKSet, jwtVerify, errors } from "jose";
 
-export async function middleware(request: NextRequest) {
-  const JWT_ENCRYPTION_KEY = process.env.JWT_ENCRYPTION_KEY;
-  const token = request.headers.get('Authorization');
+import { ApiRequest } from "./models/ApiRequest";
+import { UNIFIED_LOGIN_AUTHORITY } from "./lib/constants";
+
+const JWKS = createRemoteJWKSet(new URL(`${UNIFIED_LOGIN_AUTHORITY}/.well-known/openid-configuration/jwks`));
+
+export async function middleware(request: ApiRequest) {
+  const requestHeaders = new Headers(request.headers)
+  const authHeader = requestHeaders.get('Authorization');
+  const token = authHeader?.split(' ')[1];
 
   const { pathname } = request.nextUrl;
-  if (JWT_ENCRYPTION_KEY && pathname.includes("/api/") && token) {
+  if (pathname.includes("/api/") && token) {
     try {
-      const decodedToken = jwt.verify(token, JWT_ENCRYPTION_KEY);
-      console.log("token:::", decodedToken);
+      const { payload } = await jwtVerify(token, JWKS)
+        .catch(async (error) => {
+          if (error?.code === 'ERR_JWKS_MULTIPLE_MATCHING_KEYS') {
+            for await (const publicKey of error) {
+              return await jwtVerify(token, publicKey)
+            }
+            throw new errors.JWSSignatureVerificationFailed()
+          }
+          throw error
+        })
+      request.userId = payload.userpartyid as number;
+      return NextResponse.next({ request});
     } catch (error) {
       return NextResponse.json('Unauthorized', { status: 401 })
     }

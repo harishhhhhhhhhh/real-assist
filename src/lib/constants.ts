@@ -1,11 +1,15 @@
 const ROOT_PATH = 'http://localhost:3000';
-const OLLAMA_URL = process.env.OLLAMA_URL || 'http://localhost:11434';
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'mistral';
-const OLLAMA_EMBEDDING_MODEL = process.env.OLLAMA_EMBEDDING_MODEL || 'mxbai-embed-large';
+const UNIFIED_LOGIN_CLIENT_ID = process.env.NEXT_PUBLIC_UNIFIED_LOGIN_CLIENT_ID || '';
+const UNIFIED_LOGIN_AUTHORITY = process.env.NEXT_PUBLIC_UNIFIED_LOGIN_AUTHORITY || '';
+const OLLAMA_URL = process.env.OLLAMA_URL;
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL;
+const OLLAMA_EMBEDDINGS_MODEL = process.env.OLLAMA_EMBEDDINGS_MODEL;
 
 export {
     ROOT_PATH,
+    UNIFIED_LOGIN_CLIENT_ID,
+    UNIFIED_LOGIN_AUTHORITY,
     OLLAMA_URL,
     OLLAMA_MODEL,
-    OLLAMA_EMBEDDING_MODEL,
+    OLLAMA_EMBEDDINGS_MODEL,
 }

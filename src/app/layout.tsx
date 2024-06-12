@@ -5,15 +5,15 @@ import { Inter } from "next/font/google";
 import { AuthProvider, AuthProviderProps } from 'react-oidc-context';
 
 import "./globals.scss";
-import { ROOT_PATH } from "@/lib/constants";
+import { ROOT_PATH, UNIFIED_LOGIN_CLIENT_ID, UNIFIED_LOGIN_AUTHORITY } from "@/lib/constants";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] });
 
 const oidcConfig: AuthProviderProps = {
-  authority: "https://www-dev.realpage.com/login/identity",
-  client_id: "RealAssistUI",
+  authority: UNIFIED_LOGIN_AUTHORITY,
+  client_id: UNIFIED_LOGIN_CLIENT_ID,
   redirect_uri: ROOT_PATH,
   response_type: 'code',
   scope: 'openid',

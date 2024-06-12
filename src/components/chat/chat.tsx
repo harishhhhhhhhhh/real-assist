@@ -49,6 +49,7 @@ export function Chat({
       />
 
       <ChatBottombar
+        chatId={chatId}
         input={input}
         isLoading={isLoading}
         formRef={formRef}

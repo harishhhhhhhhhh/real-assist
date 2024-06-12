@@ -11,6 +11,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { createConversationDataService, getChatDataService } from "@/services";
 import { cn } from "@/lib/utils";
 import { Sidebar } from "../sidebar";
 import { Chat } from "./chat";
@@ -43,14 +44,17 @@ export function ChatLayout({
     handleSubmit,
     handleInputChange,
   } = useChat({
-    api: '/api/chat',
-    headers: {
-      Authorization: `Bearer ${authContext.user?.access_token}`
-    },
+    api: '/api/ai',
     onResponse: (response) => {
       if (response) {
         setLoadingSubmit(false);
       }
+    },
+    onFinish: (message) =>  {
+      createConversationDataService(chatId, {
+        role: 'assistant',
+        content: message.content
+      })
     },
     onError: (error) => {
       setLoadingSubmit(false);
@@ -63,26 +67,21 @@ export function ChatLayout({
     e.preventDefault();
     setLoadingSubmit(true);
     setMessages([...messages]);
+    createConversationDataService(chatId, {
+      role: 'user',
+      content: (e.target as HTMLInputElement).value
+    })
     handleSubmit(e);
   };
 
   // When starting a new chat, append the messages to the local storage
-  useEffect(() => {
+  /* useEffect(() => {
     if (!isLoading && !error && chatId && messages.length > 0) {
       localStorage.setItem(`chat_${chatId}`, JSON.stringify(messages));
       // Trigger the storage event to update the sidebar component
       window.dispatchEvent(new Event("storage"));
     }
-  }, [chatId, isLoading, error]);
-
-  useEffect(() => {
-    if (chatId) {
-      const item = localStorage.getItem(`chat_${chatId}`);
-      if (item) {
-        setMessages(JSON.parse(item));
-      }
-    }
-  }, []);
+  }, [chatId, isLoading, error]); */
 
   useEffect(() => {
     const checkScreenWidth = () => {
@@ -95,12 +94,24 @@ export function ChatLayout({
     };
   }, []);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!chatId && messages.length < 1) {
       const id = uuidv4();
       setChatId(id);
     }
-  }, [messages]);
+  }, [messages]); */
+
+
+  const getChatData = (id: string) => {
+    getChatDataService(id)
+      .then(data => setMessages(data.conversation));
+  }
+
+  useEffect(() => {
+    if (chatId) {
+      getChatData(chatId)
+    }
+  }, []);
 
   return (
     <ResizablePanelGroup

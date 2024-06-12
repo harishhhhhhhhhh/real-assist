@@ -11,6 +11,7 @@ import { Button } from "../ui/button";
 //import FilePicker from "../ui/file-picker";
 
 export interface ChatBottombarProps {
+  chatId: string;
   input: string;
   isLoading: boolean;
   formRef: RefObject<HTMLFormElement>;
@@ -20,6 +21,7 @@ export interface ChatBottombarProps {
 }
 
 export default function ChatBottombar({
+  chatId,
   input,
   isLoading,
   formRef,
@@ -33,32 +35,12 @@ export default function ChatBottombar({
   const handleKeyPress = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+      /* if(chatId){
+
+      } */
       handleSubmit(e as unknown as FormEvent<HTMLFormElement>);
     }
   };
-
-  /* useEffect(() => {
-    console.log("Creating Index from the PDF...")
-    const processPdfAsync = async () => {
-      if (selectedFile) {
-        const loader = new WebPDFLoader(
-          selectedFile,
-          { parsedItemSeparator: " " }
-        );
-        const lcDocs = await loader.load()
-        try {
-          //await processDocs(lcDocs)
-          console.log("Done creating Index from the PDF.")
-        } catch (e) {
-          console.log(e)
-          console.log("Error while creating index")
-        } finally {
-        }
-      }
-    }
-    processPdfAsync()
-    // console.log(selectedFile)
-  }, [selectedFile]) */
 
   useEffect(() => {
     if (inputRef.current) {
@@ -96,9 +78,6 @@ export default function ChatBottombar({
                 >
                   <SendHorizonal className="w-5 h-5 " />
                 </Button>
-                {/* <FilePicker
-                  setSelectedFile={setSelectedFile} 
-                /> */}
               </div>
             ) : (
               <div className="flex absolute right-3 items-center">

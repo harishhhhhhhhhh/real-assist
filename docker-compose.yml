@@ -1,62 +1,67 @@
 services:
-  # Ollama and API
-  ollama:
-    image: ollama/ollama:latest
-    ports:
-      - 11434:11434
-    volumes:
-      - ollama:/root/.ollama
+  ## Ollama and API
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   ports:
+  #     - 11434:11434
+  #   volumes:
+  #     - ollama:/root/.ollama
 
-  # Pull, Ollama model to use
-  ollama-models-pull:
-    image: curlimages/curl:latest
-    command: >-
-      http://ollama:11434/api/pull -d '{"name": "mistral"}'
-    depends_on:
-      - ollama
+  # ## Pull, Ollama model to use
+  # ollama-models-pull:
+  #   image: curlimages/curl:latest
+  #   command: >-
+  #     ${OLLAMA_URL}/api/pull -d '{"name": "${OLLAMA_MODEL}"}'
+  #   depends_on:
+  #     - ollama
 
-  # Pull, Ollama embedding to use
-  ollama-embeddings-pull:
-    image: curlimages/curl:latest
-    command: >-
-      http://ollama:11434/api/pull -d '{"name": "mxbai-embed-large"}'
-    depends_on:
-      - ollama
+  # ## Pull, Ollama embedding to use
+  # ollama-embeddings-pull:
+  #   image: curlimages/curl:latest
+  #   command: >-
+  #     ${OLLAMA_URL}/api/pull -d '{"name": "${OLLAMA_EMBEDDINGS_MODEL}"}'
+  #   depends_on:
+  #     - ollama
   
-  # Mongo database
-  mongodb_database:
-    image: mongo:latest
+  ## Mongo database
+  mongodb:
+    build:
+      context: ./mongodb_rs
+    restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: db
+      MONGO_REPLICA_HOST: localhost
+      MONGO_REPLICA_PORT: "27017"
     ports:
       - 27017:27017
-    volumes:
-      - mongodb_database:/data/db
-    depends_on:
-      - ollama
+    # depends_on:
+    #   - ollama
 
-  # NextJs web application UI
-  nextjs-ui:
-    build:
-      context: ./
-      dockerfile: dev.DockerFile
-    environment:
-      NEXT_PUBLIC_OLLAMA_URL: http://ollama:11434
-      NEXT_PUBLIC_OLLAMA_MODEL: mistral
-    restart: always
-    ports:
-      - 3000:3000
-    volumes:
-      - ./src:/app/src
-      - ./public:/app/public
-    depends_on:
-      - ollama
-      - ollama-models-pull
-      - ollama-embeddings-pull
-      - mongodb_database
+  ## NextJs web application UI
+  # nextjs-ui:
+  #   build:
+  #     context: ./
+  #     dockerfile: dev.DockerFile
+  #   environment:
+  #     NEXT_PUBLIC_UNIFIED_LOGIN_CLIENT_ID: ${NEXT_PUBLIC_UNIFIED_LOGIN_CLIENT_ID}
+  #     NEXT_PUBLIC_UNIFIED_LOGIN_AUTHORITY: ${NEXT_PUBLIC_UNIFIED_LOGIN_AUTHORITY}
+  #     MONGODB_URL: ${MONGODB_URL}
+  #     OLLAMA_URL: ${OLLAMA_URL}
+  #     OLLAMA_MODEL: ${OLLAMA_MODEL}
+  #     OLLAMA_EMBEDDINGS_MODEL: ${OLLAMA_EMBEDDINGS_MODEL}
+  #   restart: always
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - ./src:/app/src
+  #     - ./public:/app/public
+  #   depends_on:
+  #     - ollama
+  #     - mongodb
 
 volumes:
   ollama:
-  mongodb_database:
-  nextjs-ui:
+  mongodb_data:
+  mongodb_config:

@@ -4,7 +4,7 @@ import { Document } from "@langchain/core/documents";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { OllamaEmbeddings } from "@langchain/community/embeddings/ollama";
-import { OLLAMA_EMBEDDING_MODEL, OLLAMA_URL } from "./constants";
+import { OLLAMA_EMBEDDINGS_MODEL, OLLAMA_URL } from "./constants";
  
 const directoryLoader = new DirectoryLoader(
     "src/data",
@@ -15,7 +15,7 @@ const directoryLoader = new DirectoryLoader(
  
 async function addToVectorDb(chunks: any) {
     const embeddings = new OllamaEmbeddings({
-        model: OLLAMA_EMBEDDING_MODEL,
+        model: OLLAMA_EMBEDDINGS_MODEL,
         baseUrl: OLLAMA_URL,
     })
 

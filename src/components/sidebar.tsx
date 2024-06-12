@@ -8,6 +8,8 @@ import { Message } from "ai/react";
 import { MessagesSquare, MoreVertical, SquarePen, Trash2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { Chat } from "@/models/Chat";
+import { getChatsListService, deleteChatDataService } from "@/services";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Dialog,
@@ -37,24 +39,11 @@ export function Sidebar({
   isCollapsed,
   setMessages,
 }: SidebarProps) {
-  const [localChats, setLocalChats] = useState<
-    { chatId: string; messages: Message[] }[]
-  >([]);
-  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const [localChats, setLocalChats] = useState<Chat[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    setLocalChats(getLocalstorageChats());
-    const handleStorageChange = () => {
-      setLocalChats(getLocalstorageChats());
-    };
-    window.addEventListener("storage", handleStorageChange);
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
-
-  const getLocalstorageChats = (): {
+  /* const getLocalstorageChats = (): {
     chatId: string;
     messages: Message[];
   }[] => {
@@ -83,15 +72,25 @@ export function Sidebar({
 
     setIsLoading(false);
     return chatObjects;
-  };
+  }; */
+
+
+  const getChatsList = () => {
+    setIsLoading(true);
+    getChatsListService()
+      .then(data => setLocalChats(data))
+      .finally(() => setIsLoading(false));
+  }
 
   const handleDeleteChat = (chatId: string) => {
-    localStorage.removeItem(chatId);
-    /* if (chatParamId === chatId.substring(5)) {
-      router.push('/');
-    } */
-    setLocalChats(getLocalstorageChats());
+    deleteChatDataService(chatId)
+      .then(() => getChatsList());
   };
+
+  useEffect(() => {
+    console.log("Object:::::::");
+    getChatsList();
+  }, []);
 
   return (
     <div
@@ -118,94 +117,101 @@ export function Sidebar({
           <SquarePen size={18} className="shrink-0 w-4 h-4" />
         </Button>
 
-        {localChats.length ? (
-          <div className="flex flex-col pt-10 gap-2">
-            <p className="pl-4 text-sm text-muted-foreground">Your chats</p>
 
-            <div>
-              {localChats.map(({ chatId, messages }, index) => (
-                <Link
-                  key={index}
-                  href={`/chat/${chatId.substring(5)}`}
-                  className={cn(
-                    {
-                      [buttonVariants({ variant: "secondaryLink" })]:
-                        chatId.substring(5) === chatParamId,
-                      [buttonVariants({ variant: "ghost" })]:
-                        chatId.substring(5) !== chatParamId,
-                    },
-                    "flex justify-between w-full h-14 text-base font-normal items-center px-4 my-2"
-                  )}
-                >
-                  <div className="flex gap-3 items-center truncate">
-                    <div className="flex flex-col">
-                      {messages.length && (
-                        <span className="text-sm font-normal ">
-                          {messages[0].content}
-                        </span>
+        {isLoading ?
+          <SidebarSkeleton /> :
+          <div>
+            {localChats.length ? (
+              <div className="flex flex-col pt-10 gap-2">
+                <p className="pl-4 text-sm text-muted-foreground">Your chats</p>
+
+                <div>
+                  {localChats.map(({ id, conversation }) => (
+                    <Link
+                      key={id}
+                      href={`/chat/${id}`}
+                      className={cn(
+                        {
+                          [buttonVariants({ variant: "secondaryLink" })]:
+                            id === chatParamId,
+                          [buttonVariants({ variant: "ghost" })]:
+                            id !== chatParamId,
+                        },
+                        "flex justify-between w-full h-14 text-base font-normal items-center px-4 my-2"
                       )}
-                    </div>
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="flex justify-end items-center p-0"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <MoreVertical size={15} className="shrink-0" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <Dialog>
-                        <DialogTrigger asChild>
+                    >
+                      <div className="flex gap-3 items-center truncate">
+                        <div className="flex flex-col">
+                          {conversation.length && (
+                            <span className="text-sm font-normal ">
+                              {conversation[0].content}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
                           <Button
                             variant="ghost"
-                            className="w-full flex gap-2 hover:text-red-500 text-red-500 justify-start items-center"
+                            className="flex justify-end items-center p-0"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            <Trash2 className="shrink-0 w-4 h-4" />
-                            Delete chat
+                            <MoreVertical size={15} className="shrink-0" />
                           </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader className="space-y-4">
-                            <DialogTitle>Delete chat?</DialogTitle>
-                            <DialogDescription>
-                              Are you sure you want to delete this chat? This
-                              action cannot be undone.
-                            </DialogDescription>
-                            <div className="flex justify-end gap-2">
-                              <DialogClose asChild>
-                                <Button
-                                  variant="outline"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  Cancel
-                                </Button>
-                              </DialogClose>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <Dialog>
+                            <DialogTrigger asChild>
                               <Button
-                                variant="destructive"
-                                onClick={() => handleDeleteChat(chatId)}
+                                variant="ghost"
+                                className="w-full flex gap-2 hover:text-red-500 text-red-500 justify-start items-center"
+                                onClick={(e) => e.stopPropagation()}
                               >
-                                Delete
+                                <Trash2 className="shrink-0 w-4 h-4" />
+                                Delete chat
                               </Button>
-                            </div>
-                          </DialogHeader>
-                        </DialogContent>
-                      </Dialog>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </Link>
-              ))
-              }
-            </div>
-            {isLoading && <SidebarSkeleton />}
-          </div>
-        ) :
-          <div className="flex flex-col justify-center items-center h-screen">
-            <MessagesSquare size={34} className=" text-muted-foreground" />
-            <p className="text-base text-muted-foreground">No Chats available</p>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader className="space-y-4">
+                                <DialogTitle>Delete chat?</DialogTitle>
+                                <DialogDescription>
+                                  Are you sure you want to delete this chat? This
+                                  action cannot be undone.
+                                </DialogDescription>
+                                <div className="flex justify-end gap-2">
+                                  <DialogClose asChild>
+                                    <Button
+                                      variant="outline"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </DialogClose>
+                                  <DialogClose asChild>
+                                    <Button
+                                      variant="destructive"
+                                      onClick={() => handleDeleteChat(id)}
+                                    >
+                                      Delete
+                                    </Button>
+                                  </DialogClose>
+                                </div>
+                              </DialogHeader>
+                            </DialogContent>
+                          </Dialog>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </Link>
+                  ))
+                  }
+                </div>
+              </div>
+            ) :
+              <div className="flex flex-col justify-center items-center h-screen">
+                <MessagesSquare size={34} className=" text-muted-foreground" />
+                <p className="text-base text-muted-foreground">No Chats available</p>
+              </div>
+            }
           </div>
         }
       </div>
