@@ -10,11 +10,13 @@ import { INITIAL_QUESTIONS } from "@/utils/initial-questions";
 import { useUserData } from "@/app/hooks/useUserData";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
+import ChatListSkeleton from "../chat-list-skeleton";
 import CodeDisplayBlock from "../code-display-block";
 
 export interface ChatListProps {
   messages: Message[];
   isLoading: boolean;
+  chatLoading: boolean;
   loadingSubmit: boolean;
   formRef: RefObject<HTMLFormElement>;
   error: undefined | Error;
@@ -24,6 +26,7 @@ export interface ChatListProps {
 export default function ChatList({
   messages,
   isLoading,
+  chatLoading,
   loadingSubmit,
   formRef,
   handleInputChange,
@@ -55,6 +58,10 @@ export default function ChatList({
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages]);
+
+  if (chatLoading) {
+    return <ChatListSkeleton />;
+  }
 
   if (messages.length === 0) {
     return (

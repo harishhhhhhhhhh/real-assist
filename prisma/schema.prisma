@@ -11,9 +11,10 @@ datasource db {
 }
 
 model chat {
-    id           String         @id @default(auto()) @map("_id") @db.ObjectId
-    userId       Int
-    messages message[]
+    id        String    @id @default(auto()) @map("_id") @db.ObjectId
+    userId    Int
+    messages  message[]
+    createdAt DateTime  @default(now())
 }
 
 model message {

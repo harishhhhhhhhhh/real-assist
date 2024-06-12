@@ -5,7 +5,12 @@ import { Inter } from "next/font/google";
 import { AuthProvider, AuthProviderProps } from 'react-oidc-context';
 
 import "./globals.scss";
-import { ROOT_PATH, UNIFIED_LOGIN_CLIENT_ID, UNIFIED_LOGIN_AUTHORITY } from "@/lib/constants";
+import { 
+  ROOT_PATH, 
+  APPLICATION_NAME,
+  UNIFIED_LOGIN_CLIENT_ID, 
+  UNIFIED_LOGIN_AUTHORITY, 
+} from "@/lib/constants";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "@/components/ui/toaster"
 
@@ -35,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <head>
-        <title>Real Assist</title>
+        <title>{APPLICATION_NAME}</title>
       </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark">

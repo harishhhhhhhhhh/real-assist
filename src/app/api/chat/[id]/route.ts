@@ -14,7 +14,11 @@ export async function GET(
       userId: Number(req.headers.get('userId')),
     },
     include: {
-      messages: true,
+      messages: {
+        orderBy: {
+          createdAt: 'desc'
+        },
+      }
     },
   });
   return NextResponse.json(result, { status: 200 })

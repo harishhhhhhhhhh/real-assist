@@ -9,6 +9,9 @@ export async function GET(req: NextRequest) {
     where: {
       userId:  Number(req.headers.get('userId')),
     },
+    orderBy: {
+      createdAt: 'desc'
+    },
     include: {
       messages: {
         take: 1,
@@ -28,6 +31,15 @@ export async function POST(req: NextRequest) {
           data: messages
         }
       }
+    },
+  })
+  return NextResponse.json(result, { status: 200 })
+}
+
+export async function DELETE(req: NextRequest) {
+  const result = await prisma.chat.deleteMany({
+    where: {
+      userId: Number(req.headers.get('userId')),
     },
   })
   return NextResponse.json(result, { status: 200 })
