@@ -97,7 +97,10 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
 
 
         {isLoading ?
-          <SidebarSkeleton /> :
+          <div className="flex flex-col pt-10 gap-2">
+            <p className="text-sm text-muted-foreground">Your chats</p>
+            <SidebarSkeleton />
+          </div> :
           <div>
             {localChats.length ? (
               <div className="flex flex-col pt-10 gap-2">
@@ -148,7 +151,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
                       href={`/chat/${id}`}
                       className={cn(
                         {
-                          [buttonVariants({ variant: "secondaryLink" })]:
+                          [buttonVariants({ variant: "outline" })]:
                             id === chatParamId,
                           [buttonVariants({ variant: "ghost" })]:
                             id !== chatParamId,
@@ -156,18 +159,29 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
                         "flex justify-between w-full h-14 text-base font-normal items-center px-4 my-2"
                       )}
                     >
-                      <div className="flex gap-3 items-center truncate">
-                        <div className="flex flex-col">
-                          <span className="text-sm font-normal ">
-                            {messages.length ? messages[0].content : 'New Chat'}
+                      <div className="flex items-center truncate">
+                        {messages.map((message, messsageIndex) =>
+                          <span
+                            key={message.id}
+                            className={cn(
+                              {
+                                ["text-[14px]"]: messsageIndex === 0,
+                                ["text-[13px] opacity-75"]: messsageIndex === 1,
+                                ["text-[12px] opacity-50"]: messsageIndex === 2,
+                              },
+                              "font-normal"
+                            )}
+                          >
+                            {message.content || 'New Chat'}
+                            <span className="mx-1">-&gt;</span>
                           </span>
-                        </div>
+                        )}
                       </div>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
                             variant="ghost"
-                            className="flex justify-end items-center p-0"
+                            className="flex ml-2 justify-end items-center p-1"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <MoreVertical size={15} className="shrink-0" />
@@ -215,8 +229,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </Link>
-                  ))
-                  }
+                  ))}
                 </div>
               </div>
             ) :

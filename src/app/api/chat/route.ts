@@ -14,7 +14,10 @@ export async function GET(req: NextRequest) {
     },
     include: {
       messages: {
-        take: 1,
+        take: 3,
+        where: {
+          role: 'user'
+        }
       },
     },
   });
