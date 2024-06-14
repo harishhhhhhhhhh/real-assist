@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function ChatListSkeleton() {
+export const ChatListSkeleton = () => {
   return (
     <div className="relative w-full h-full flex">
       <div className="flex flex-col w-full gap-2 justify-end">

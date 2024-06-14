@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { useChat } from "ai/react";
 import { toast } from "sonner";
 
-import ChatBottombar from "@/components/chat/chat-bottombar";
-import ChatTopbar from "@/components/chat/chat-topbar";
-import ChatList from "@/components/chat/chat-list";
+import { ChatBottombar } from "@/components/chat/chat-bottombar";
+import { ChatTopbar } from "@/components/chat/chat-topbar";
+import { ChatList } from "@/components/chat/chat-list";
 import { createChatDataService, createMessageDataService, getChatDataService } from "@/services";
 
 export default function ChatPage({ params }: { params: { id: string } }) {
@@ -71,8 +71,8 @@ export default function ChatPage({ params }: { params: { id: string } }) {
         .then(data => {
           window.dispatchEvent(new Event("storage"));
           setChatId(data.id);
-      });
-      
+        });
+
     }
   }, [isLoading, chatId, error, messages]);
 

@@ -14,7 +14,7 @@ import { Button } from "./ui/button";
 import { Loader } from "./ui/loader";
 import { cn } from "@/lib/utils";
 
-export default function ManageFiles() {
+export const ManageFiles = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const deletedFilesRef = useRef<number>(0);
     const [uploadedFiles, setUploadedFiles] = useState<FileInfo[]>([]);

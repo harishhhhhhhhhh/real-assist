@@ -25,14 +25,14 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import UserSettings from "./user-settings";
-import SidebarSkeleton from "./sidebar-skeleton";
+import { UserSettings } from "./user-settings";
+import { SidebarSkeleton } from "./sidebar-skeleton";
 
 interface SidebarProps {
   isCollapsed: boolean;
 }
 
-export function Sidebar({ isCollapsed }: SidebarProps) {
+export const Sidebar = ({ isCollapsed }: SidebarProps) => {
   const router = useRouter();
   const params = useParams();
   const refreshChatId = '/chat/123456c1234c12345e123456';

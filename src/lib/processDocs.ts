@@ -1,40 +1,47 @@
 import { DirectoryLoader, } from "langchain/document_loaders/fs/directory";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
-import { Document } from "@langchain/core/documents";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
+import { Document } from "@langchain/core/documents";
 import { OllamaEmbeddings } from "@langchain/community/embeddings/ollama";
+
 import { OLLAMA_EMBEDDINGS_MODEL, OLLAMA_URL } from "./constants";
 
-const directoryLoader = new DirectoryLoader(
-    "src/data",
-    {
-        ".pdf": (path: string) => new PDFLoader(path),
+declare const globalThis: {
+    store: {
+        vectorStore: MemoryVectorStore;
+        allChunks: any;
     }
-);
+} & typeof global;
 
-async function addToVectorDb(chunks: any) {
+async function addToVectorDb(allChunks: any) {
     const embeddings = new OllamaEmbeddings({
         model: OLLAMA_EMBEDDINGS_MODEL,
         baseUrl: OLLAMA_URL,
     })
 
-    const chunkTexts = chunks.map((chunk: Document) => chunk.pageContent);
-    const metadatas = chunks.map((chunk: Document) => chunk.metadata);
+    const chunkTexts = allChunks.map((chunk: Document) => chunk.pageContent);
+    const metadatas = allChunks.map((chunk: Document) => chunk.metadata);
 
     const vectorStore = await MemoryVectorStore.fromTexts(chunkTexts, metadatas, embeddings);
 
-    return vectorStore
+    return {
+        vectorStore,
+        allChunks,
+    }
 }
 
 const processDocsSingleton = async () => {
     console.log("Processing Docs:::");
+    const directoryLoader = new DirectoryLoader("src/data", {
+        ".pdf": (path: string) => new PDFLoader(path)
+    });
     const loadedDocs = await directoryLoader.load();
     console.log("Docs loaded")
     const chunks = await splitDocuments(loadedDocs);
     console.log("chunks completed")
-    globalThis.allChunks = calculateChunkIds(chunks)
-    const store = await addToVectorDb(globalThis.allChunks);
+    const allChunks = calculateChunkIds(chunks)
+    const store = await addToVectorDb(allChunks);
     console.log("Processing Completed:::");
     return store;
 }
@@ -48,6 +55,7 @@ const splitDocuments = (documents: any[]) => {
 
     return textSplitter.splitDocuments(documents);
 }
+
 const calculateChunkIds = (chunks: any) => {
     for (let i = 0; i < chunks.length; i++) {
         const chunk = chunks[i];
@@ -62,16 +70,6 @@ const calculateChunkIds = (chunks: any) => {
     return chunks;
 }
 
-export function getProcessedChunks() {
-    return globalThis.allChunks;
-}
-
-declare const globalThis: {
-    store: any;
-    allChunks: any;
-} & typeof global;
- 
- 
 const processDocsStore = async () => {
     return globalThis.store = globalThis.store ?? await processDocsSingleton();
 }

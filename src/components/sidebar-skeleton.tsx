@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function SidebarSkeleton() {
+export const SidebarSkeleton = () => {
   return (
     <div className="flex flex-col w-full gap-2 ">
       <div className="flex h-14 w-full bg-primary/5 justify-between rounded-xl items-center p-2">

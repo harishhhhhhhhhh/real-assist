@@ -1,18 +1,17 @@
 import { useRef, useEffect, ChangeEvent, RefObject, MouseEvent, useState } from "react";
 import { Message } from "ai/react";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { cn } from "@/lib/utils";
 import { Question } from "@/models/Question";
-import { INITIAL_QUESTIONS } from "@/utils/initial-questions";
 import { useUserData } from "@/app/hooks/useUserData";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Button } from "../ui/button";
-import ChatListSkeleton from "../chat-list-skeleton";
-import CodeDisplayBlock from "../code-display-block";
+import { ChatListSkeleton } from "../chat-list-skeleton";
+import { CodeDisplayBlock } from "../code-display-block";
+import { ChatInitialQuestions } from "./chat-initial-questions";
+import { ChatFollowQuestions } from "./chat-follow-questions";
 
 export interface ChatListProps {
   messages: Message[];
@@ -24,22 +23,25 @@ export interface ChatListProps {
   handleInputChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
-export default function ChatList({
+export const ChatList = ({
   messages,
   isLoading,
   chatLoading,
   loadingSubmit,
   formRef,
   handleInputChange,
-}: ChatListProps) {
+}: ChatListProps) => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const { userName } = useUserData();
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [isAssistantAnswered, setIsAssistantAnswered] = useState<boolean>(false);
 
   const onClickQuestion = (e: MouseEvent, message: Question) => {
     e.preventDefault();
-    const messageContent = message.questions ? `@${message.content}`: message.content;
-    setQuestions(message.questions || []);
+    const messageContent = message.questions ? `@${message.content}` : message.content;
+    if (message.questions?.length) {
+      setQuestions(message.questions);
+    }
     handleInputChange({ target: { value: messageContent } } as ChangeEvent<HTMLTextAreaElement>);
     setTimeout(() => {
       formRef.current?.dispatchEvent(
@@ -53,6 +55,9 @@ export default function ChatList({
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    if (!isLoading && !loadingSubmit && messages.length) {
+      setIsAssistantAnswered(messages[messages.length - 1].role === 'assistant');
+    }
   }, [messages]);
 
   if (chatLoading) {
@@ -60,53 +65,9 @@ export default function ChatList({
   }
 
   if (messages.length === 0) {
-    return (
-      <div className="relative w-full h-full flex justify-center">
-        <div className="absolute bottom-0 flex flex-col gap-4 w-full">
-          <div className="flex flex-col items-center mb-8">
-            <Image
-              src="/realpage-logo.png"
-              alt="AI"
-              width={80}
-              height={80}
-              className="object-contain"
-              priority
-            />
-            <p className="text-center text-lg text-muted-foreground">
-              How can I help you today?
-            </p>
-          </div>
-
-          <div className="w-full px-4 sm:max-w-3xl grid gap-2 sm:grid-cols-3 sm:gap-4 text-sm">
-            {INITIAL_QUESTIONS.map((question) => {
-              const delay = Math.random() * 0.25;
-              return (
-                <motion.div
-                  key={question.content}
-                  initial={{ opacity: 0, scale: 1, y: 10, x: 0 }}
-                  animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
-                  exit={{ opacity: 0, scale: 1, y: 10, x: 0 }}
-                  transition={{
-                    opacity: { duration: 0.1, delay },
-                    scale: { duration: 0.1, delay },
-                    y: { type: "spring", stiffness: 100, damping: 10, delay },
-                  }}
-                >
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="sm:text-start px-4 py-8 flex w-full justify-center sm:justify-start items-center text-sm whitespace-pre-wrap"
-                    onClick={(e) => onClickQuestion(e, question)}
-                  >
-                    {question.content}
-                  </Button>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    );
+    return <ChatInitialQuestions
+      onClickQuestion={onClickQuestion}
+    />
   }
 
   return (
@@ -156,88 +117,49 @@ export default function ChatList({
                 </div>
               )}
               {message.role === "assistant" && (
-                <div className="flex items-end gap-2">
-                  <Avatar className="flex justify-start items-center rounded-full border">
-                    <AvatarImage
-                      src="/realpage-logo.png"
-                      alt="AI"
-                      width={6}
-                      height={6}
-                      className="object-contain"
-                    />
-                  </Avatar>
-                  <span className="bg-accent p-3 rounded-md max-w-xs sm:max-w-2xl overflow-x-auto">
-                    {/* Check if the message content contains a code block */}
-                    {message.content.split("```").map((part, index) => {
-                      if (index % 2 === 0) {
-                        return (
-                          <Markdown key={index} remarkPlugins={[remarkGfm]}>
-                            {part}
-                          </Markdown>
-                        );
-                      } else {
-                        return (
-                          <pre className="whitespace-pre-wrap" key={index}>
-                            <CodeDisplayBlock code={part} lang="" />
-                          </pre>
-                        );
-                      }
-                    })}
-                    {isLoading &&
-                      messages.indexOf(message) === messages.length - 1 && (
-                        <span className="animate-pulse" aria-label="Typing">
-                          ...
-                        </span>
-                      )}
-                  </span>
+                <div>
+                  <div className="flex items-end gap-2">
+                    <Avatar className="flex justify-start items-center rounded-full border">
+                      <AvatarImage
+                        src="/realpage-logo.png"
+                        alt="AI"
+                        width={6}
+                        height={6}
+                        className="object-contain"
+                      />
+                    </Avatar>
+                    <span className="bg-accent p-3 rounded-md max-w-xs sm:max-w-2xl overflow-x-auto">
+                      {/* Check if the message content contains a code block */}
+                      {message.content.split("```").map((part, index) => {
+                        if (index % 2 === 0) {
+                          return (
+                            <Markdown key={index} remarkPlugins={[remarkGfm]}>
+                              {part}
+                            </Markdown>
+                          );
+                        } else {
+                          return (
+                            <pre className="whitespace-pre-wrap" key={index}>
+                              <CodeDisplayBlock code={part} lang="" />
+                            </pre>
+                          );
+                        }
+                      })}
+                      {isLoading &&
+                        messages.indexOf(message) === messages.length - 1 && (
+                          <span className="animate-pulse" aria-label="Typing">
+                            ...
+                          </span>
+                        )}
+                    </span>
+                  </div>
                 </div>
               )}
             </div>
           </motion.div>
         ))}
 
-        {(!loadingSubmit && questions.length > 0) && (
-          <div className="flex pl-4 pb-4 gap-2 items-start">
-            <Avatar className="flex justify-start items-center rounded-full border">
-              <AvatarImage
-                src="/realpage-logo.png"
-                alt="AI"
-                width={6}
-                height={6}
-                className="object-contain"
-              />
-            </Avatar>
-            <div className="w-1/2 grid grid-cols-1 gap-2 text-sm">
-              {questions.map(question => {
-                const delay = Math.random() * 0.25;
-                return (
-                  <motion.div
-                    key={question.content}
-                    initial={{ opacity: 0, scale: 1, y: 10, x: 0 }}
-                    animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
-                    exit={{ opacity: 0, scale: 1, y: 10, x: 0 }}
-                    transition={{
-                      opacity: { duration: 0.1, delay },
-                      scale: { duration: 0.1, delay },
-                      y: { type: "spring", stiffness: 100, damping: 10, delay },
-                    }}
-                  >
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="sm:text-start px-4 py-6 flex justify-center sm:justify-start items-center text-sm whitespace-pre-wrap"
-                      onClick={(e) => onClickQuestion(e, question)}
-                    >
-                      {question.content}
-                    </Button>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-        
-        {loadingSubmit && (
+        {loadingSubmit ? (
           <div className="flex pl-4 pb-4 gap-2 items-center">
             <Avatar className="flex justify-start items-center rounded-full border">
               <AvatarImage
@@ -255,6 +177,25 @@ export default function ChatList({
                 <span className="size-1.5 rounded-full bg-slate-700 motion-safe:animate-[bounce_1s_ease-in-out_infinite] dark:bg-slate-300"></span>
               </div>
             </div>
+          </div>
+        ) : ((!isLoading && questions.length > 0) &&
+          <div className="flex pl-4 pb-4 gap-2 items-start">
+            {!isAssistantAnswered &&
+              <Avatar className="flex justify-start items-center rounded-full border">
+                <AvatarImage
+                  src="/realpage-logo.png"
+                  alt="AI"
+                  width={6}
+                  height={6}
+                  className="object-contain"
+                />
+              </Avatar>
+            }
+            <ChatFollowQuestions
+              expanded={!isAssistantAnswered}
+              questions={questions}
+              onClickQuestion={onClickQuestion}
+            />
           </div>
         )}
       </div>

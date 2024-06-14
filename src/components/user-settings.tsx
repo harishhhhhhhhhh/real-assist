@@ -11,15 +11,14 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
 import { useUserData } from "@/app/hooks/useUserData";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
-import ManageFiles from "./manage-files";
+import { ManageFiles } from "./manage-files";
 
-export default function UserSettings() {
+export const UserSettings = () => {
   const { userName, signoutRedirect } = useUserData();
 
   return (

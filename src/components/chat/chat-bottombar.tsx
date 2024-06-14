@@ -17,14 +17,14 @@ export interface ChatBottombarProps {
   handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
 }
 
-export default function ChatBottombar({
+export const ChatBottombar = ({
   input,
   isLoading,
   formRef,
   handleStop,
   handleInputChange,
   handleSubmit,
-}: ChatBottombarProps) {
+}: ChatBottombarProps) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const handleKeyPress = (e: KeyboardEvent<HTMLTextAreaElement>) => {

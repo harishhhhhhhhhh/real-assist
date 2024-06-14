@@ -12,7 +12,7 @@ interface ButtonCodeblockProps {
   lang: string;
 }
 
-export default function CodeDisplayBlock({ code, lang }: ButtonCodeblockProps) {
+export const CodeDisplayBlock = ({ code, lang }: ButtonCodeblockProps) => {
   const [isCopied, setisCopied] = useState(false);
   const { theme } = useTheme();
 

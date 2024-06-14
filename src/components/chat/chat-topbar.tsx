@@ -10,7 +10,7 @@ import {
 import { Sidebar } from "../sidebar";
 import { ModeToggle } from "../mode-toggle";
 
-export default function ChatTopbar() {
+export const ChatTopbar = () => {
   return (
     <div className="w-full flex px-4 py-6 items-center justify-between lg:justify-center ">
       <Sheet>
@@ -18,7 +18,7 @@ export default function ChatTopbar() {
           <HamburgerMenuIcon className="w-5 h-5" />
         </SheetTrigger>
         <SheetContent side="left">
-          <Sidebar isCollapsed={false}/>
+          <Sidebar isCollapsed={false} />
         </SheetContent>
         <ModeToggle />
       </Sheet>
