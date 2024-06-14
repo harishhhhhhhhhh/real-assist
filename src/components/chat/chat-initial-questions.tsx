@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 import { Question } from "@/models/Question";
-import { INITIAL_QUESTIONS } from "@/utils/initial-questions";
+import { QUESTIONS_DATA } from "@/questions";
 import { Button } from "../ui/button";
 
 export interface ChatInitialQuestionsProps {
@@ -29,7 +29,7 @@ export const ChatInitialQuestions = ({ onClickQuestion }: ChatInitialQuestionsPr
         </div>
 
         <div className="w-full px-4 sm:max-w-3xl grid gap-2 sm:grid-cols-3 sm:gap-4 text-sm">
-          {INITIAL_QUESTIONS.map((question) => {
+          {QUESTIONS_DATA.map(question => {
             const delay = Math.random() * 0.25;
             return (
               <motion.div

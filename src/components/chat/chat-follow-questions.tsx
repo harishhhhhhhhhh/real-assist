@@ -1,7 +1,7 @@
 import { MouseEvent, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Question } from "@/models/Question";
 
+import { Question } from "@/models/Question";
 import { Button } from "../ui/button";
 
 export interface ChatFollowQuestionsProps {
