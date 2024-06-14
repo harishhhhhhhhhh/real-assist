@@ -50,7 +50,7 @@ export const INITIAL_QUESTIONS: Question[] = [
         content: "How to claim the internet reimbursement when in a notice period?",
       }, {
         role: 'user',
-        content: "List down Exit Checklist",
+        content: "List down employee exit checklist",
       }]
     }, {
       role: 'user',
@@ -66,7 +66,7 @@ export const INITIAL_QUESTIONS: Question[] = [
         content: "What are allowable exemptions in New Tax Regime?",
       }, {
         role: 'user',
-        content: "Old Tax Regime tax slabs",
+        content: "What are tax slabs and tax rates in Old Tax Regime?",
       }, {
         role: 'user',
         content: "What are allowable exemptions in Old Tax Regime?",

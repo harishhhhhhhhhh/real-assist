@@ -5,7 +5,6 @@ import { formatDocumentsAsString } from 'langchain/util/document';
 
 import { StreamingTextResponse, Message, createStreamDataTransformer, AIStream } from "ai";
 import { ChatOllama } from "@langchain/community/chat_models/ollama";
-import { AIMessage, HumanMessage } from "@langchain/core/messages";
 import { Document } from "@langchain/core/documents";
 
 import { OLLAMA_MODEL, OLLAMA_URL } from "@/lib/constants";
@@ -46,29 +45,17 @@ export async function POST(req: Request) {
       return new StreamingTextResponse(stream);
     }
 
-    const prompt = PromptTemplate.fromTemplate(TEMPLATE);
     const { vectorStore, allChunks } = await processDocsStore();
-    const relevantVectors = await vectorStore.similaritySearch(currentMessage.content, 2);
+    const relevantVectors = await vectorStore.similaritySearch(currentMessage.content, 1);
     /* const contextText = relevantVectors.map((doc: any) => doc.page_content).join("\n\n---\n\n");
     console.log("relevant vectorssss", relevantVectors);
     console.log("curent message", currentMessage.content)
     // console.log("things going to llm as context", formatDocumentsAsString(relevantVectors))
-    const chunkIds = relevantVectors.map((vector: any) => vector.metadata.id)
     const allChunks = getProcessedChunks();
     // console.log("all chunks", allChunks) */
-    const combinedVectors = createCombinedChunks(
-      relevantVectors.map((vector: any) => vector.metadata.id),
-      allChunks
-    )
+    const chunkIds = relevantVectors.map((vector: any) => vector.metadata.id)
+    const combinedVectors = createCombinedChunks(chunkIds, allChunks, 2)
     console.log("previos current will all vecotrs", combinedVectors);
-
-    const model = new ChatOllama({
-      baseUrl: OLLAMA_URL,
-      model: OLLAMA_MODEL,
-      temperature: 0,
-    });
-
-    const parser = new HttpResponseOutputParser();
 
     const chain = RunnableSequence.from([
       {
@@ -77,9 +64,13 @@ export async function POST(req: Request) {
         dont_know_message: () => getDontKnowMessage(),
         context: () => formatDocumentsAsString(combinedVectors),
       },
-      prompt,
-      model,
-      parser,
+      PromptTemplate.fromTemplate(TEMPLATE),
+      new ChatOllama({
+        baseUrl: OLLAMA_URL,
+        model: OLLAMA_MODEL,
+        temperature: 0,
+      }),
+      new HttpResponseOutputParser(),
     ]);
 
     // Convert the response into a friendly text-stream
@@ -90,7 +81,7 @@ export async function POST(req: Request) {
 
     // Respond with the stream
     return new StreamingTextResponse(
-      stream.pipeThrough(createStreamDataTransformer()),
+      stream.pipeThrough(createStreamDataTransformer())
     );
   } catch (e: any) {
     return Response.json({ error: e.message }, { status: e.status ?? 500 });
@@ -113,18 +104,23 @@ const getDontKnowMessage = () => {
 `)
 }
 
-const createCombinedChunks = (chunkIds: any, allChunks: any) => {
+const createCombinedChunks = (chunkIds: any, allChunks: any, length: number) => {
   return chunkIds.map((chunkId: any) => {
     const currentChunkIndex = allChunks.findIndex((chunk: any) => chunk.metadata.id === chunkId);
-    const previousChunk = allChunks[currentChunkIndex - 1] || null;
-    const currentChunk = allChunks[currentChunkIndex];
-    const nextChunk = allChunks[currentChunkIndex + 1] || null;
 
-    const combinedPageContent = [
-      previousChunk?.pageContent || '',
-      currentChunk.pageContent,
-      nextChunk?.pageContent || ''
-    ].filter(Boolean).join('\n\n---\n\n');
+    let chunksListContent = [];
+    for (let i = (currentChunkIndex - length); i <= (currentChunkIndex + length); i++) {
+      if (allChunks[i]) {
+        chunksListContent.push(allChunks[i].pageContent);
+      }
+    }
+
+    /* const ansistorChunk = allChunks[currentChunkIndex - 1] || null;
+    const previousChunk = allChunks[currentChunkIndex - 1] || null; */
+    const currentChunk = allChunks[currentChunkIndex];
+    /* const nextChunk = allChunks[currentChunkIndex + 1] || null; */
+
+    const combinedPageContent = chunksListContent.join('\n\n---\n\n');
     return new Document({
       pageContent: combinedPageContent,
       metadata: { ...currentChunk.metadata }

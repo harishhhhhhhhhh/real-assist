@@ -48,8 +48,8 @@ const processDocsSingleton = async () => {
 
 const splitDocuments = (documents: any[]) => {
     const textSplitter = new RecursiveCharacterTextSplitter({
-        chunkSize: 1000,
-        chunkOverlap: 100,
+        chunkSize: 200,
+        chunkOverlap: 50,
         lengthFunction: (text: string) => text.length,
     });
 
