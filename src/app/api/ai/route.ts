@@ -1,9 +1,8 @@
 import { PromptTemplate } from '@langchain/core/prompts';
-import { HttpResponseOutputParser } from 'langchain/output_parsers';
 import { RunnableSequence } from '@langchain/core/runnables'
 import { formatDocumentsAsString } from 'langchain/util/document';
 
-import { StreamingTextResponse, Message, createStreamDataTransformer, AIStream } from "ai";
+import { StreamingTextResponse, Message, AIStream, StreamData, LangChainAdapter } from "ai";
 import { ChatOllama } from "@langchain/community/chat_models/ollama";
 import { Document } from "@langchain/core/documents";
 
@@ -13,7 +12,7 @@ import processDocsStore from '@/lib/processDocs';
 
 export const dynamic = "force-dynamic";
 
-const TEMPLATE = `You are a  RealPage Hr assistant. Your primary task is to answer questions based STRICTLY on the provided context.
+const SYSTEM_TEMPLATE = `You are a  RealPage Hr assistant. Your primary task is to answer questions based STRICTLY on the provided context.
  
 RULES:
 - ONLY answer if the question relates directly to the provided context.
@@ -53,35 +52,47 @@ export async function POST(req: Request) {
     // console.log("things going to llm as context", formatDocumentsAsString(relevantVectors))
     const allChunks = getProcessedChunks();
     // console.log("all chunks", allChunks) */
-    const chunkIds = relevantVectors.map((vector: any) => vector.metadata.id)
-    const combinedVectors = createCombinedChunks(chunkIds, allChunks, 2)
-    console.log("previos current will all vecotrs", combinedVectors);
+    const chunkIds = relevantVectors.map((vector: any) => vector.metadata.id);
+    const combinedVectors = createCombinedChunks(chunkIds, allChunks, 2);
+    console.log("combinedVectors::", combinedVectors);
+    //console.log("previos current will all vecotrs", combinedVectors);
 
     const chain = RunnableSequence.from([
       {
         question: (input) => input.question,
+        context: (input) => formatDocumentsAsString(input.context),
         chat_history: (input) => input.chat_history,
-        dont_know_message: () => getDontKnowMessage(),
-        context: () => formatDocumentsAsString(combinedVectors),
+        dont_know_message: (input) => input.dont_know_message,
       },
-      PromptTemplate.fromTemplate(TEMPLATE),
+      PromptTemplate.fromTemplate(SYSTEM_TEMPLATE),
       new ChatOllama({
         baseUrl: OLLAMA_URL,
         model: OLLAMA_MODEL,
         temperature: 0,
       }),
-      new HttpResponseOutputParser(),
     ]);
 
     // Convert the response into a friendly text-stream
     const stream = await chain.stream({
-      chat_history: formattedPreviousMessages.join('\n'),
       question: currentMessage.content,
+      chat_history: formattedPreviousMessages.join('\n'),
+      context: combinedVectors,
+      dont_know_message: getDontKnowMessage(),
+    });
+
+    const streamData = new StreamData();
+
+    combinedVectors.forEach(doc => streamData.append(doc.metadata));
+
+    const aiStream = LangChainAdapter.toAIStream(stream, {
+      onFinal: () => streamData.close(),
     });
 
     // Respond with the stream
     return new StreamingTextResponse(
-      stream.pipeThrough(createStreamDataTransformer())
+      aiStream,
+      {},
+      streamData,
     );
   } catch (e: any) {
     return Response.json({ error: e.message }, { status: e.status ?? 500 });
@@ -104,7 +115,7 @@ const getDontKnowMessage = () => {
 `)
 }
 
-const createCombinedChunks = (chunkIds: any, allChunks: any, length: number) => {
+const createCombinedChunks = (chunkIds: number[], allChunks: Document[], length: number) => {
   return chunkIds.map((chunkId: any) => {
     const currentChunkIndex = allChunks.findIndex((chunk: any) => chunk.metadata.id === chunkId);
 
@@ -115,10 +126,7 @@ const createCombinedChunks = (chunkIds: any, allChunks: any, length: number) => 
       }
     }
 
-    /* const ansistorChunk = allChunks[currentChunkIndex - 1] || null;
-    const previousChunk = allChunks[currentChunkIndex - 1] || null; */
     const currentChunk = allChunks[currentChunkIndex];
-    /* const nextChunk = allChunks[currentChunkIndex + 1] || null; */
 
     const combinedPageContent = chunksListContent.join('\n\n---\n\n');
     return new Document({

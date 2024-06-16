@@ -1,7 +1,8 @@
-import { Message } from "ai";
+import { MongoMessage } from "./MongoMessage";
 
 export interface Chat {
     id: string;
     userId: number;
-    messages: Message[];
+    messages: MongoMessage[];
+    createdAt: Date;
 }

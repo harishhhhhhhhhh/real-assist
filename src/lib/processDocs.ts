@@ -10,7 +10,7 @@ import { OLLAMA_EMBEDDINGS_MODEL, OLLAMA_URL } from "./constants";
 declare const globalThis: {
     store: {
         vectorStore: MemoryVectorStore;
-        allChunks: any;
+        allChunks: Document[];
     }
 } & typeof global;
 
@@ -39,7 +39,7 @@ const processDocsSingleton = async () => {
     const loadedDocs = await directoryLoader.load();
     console.log("Docs loaded")
     const chunks = await splitDocuments(loadedDocs);
-    console.log("chunks completed")
+    console.log("chunks completed");
     const allChunks = calculateChunkIds(chunks)
     const store = await addToVectorDb(allChunks);
     console.log("Processing Completed:::");
@@ -48,7 +48,7 @@ const processDocsSingleton = async () => {
 
 const splitDocuments = (documents: any[]) => {
     const textSplitter = new RecursiveCharacterTextSplitter({
-        chunkSize: 200,
+        chunkSize: 300,
         chunkOverlap: 50,
         lengthFunction: (text: string) => text.length,
     });

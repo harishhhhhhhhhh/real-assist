@@ -1,25 +1,28 @@
 import { useRef, useEffect, ChangeEvent, RefObject, MouseEvent, useState } from "react";
-import { Message } from "ai/react";
 import { motion } from "framer-motion";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { cn } from "@/lib/utils";
-import { Question } from "@/models/Question";
+import { Question, MongoMessage } from "@/models";
 import { useUserData } from "@/app/hooks/useUserData";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ChatListSkeleton } from "../chat-list-skeleton";
 import { CodeDisplayBlock } from "../code-display-block";
 import { ChatInitialQuestions } from "./chat-initial-questions";
 import { ChatFollowQuestions } from "./chat-follow-questions";
+import { ThumbsDown, ThumbsUp } from "lucide-react";
+import { updateFeedbackService } from "@/services";
+//import { FileIcon } from "@radix-ui/react-icons";
 
 export interface ChatListProps {
-  messages: Message[];
+  messages: MongoMessage[];
   isLoading: boolean;
   chatLoading: boolean;
   loadingSubmit: boolean;
   formRef: RefObject<HTMLFormElement>;
   error: undefined | Error;
+  setMessages: (messages: MongoMessage[]) => void;
   handleInputChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
@@ -29,6 +32,7 @@ export const ChatList = ({
   chatLoading,
   loadingSubmit,
   formRef,
+  setMessages,
   handleInputChange,
 }: ChatListProps) => {
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -52,6 +56,24 @@ export const ChatList = ({
       );
     });
   };
+
+
+
+
+  const handleFeedbackEvent = (index: number, value: boolean) => {
+    const message = messages[index];
+    messages[index].data = {
+      feedback: value
+    };
+    setMessages([...messages]);
+    updateFeedbackService(
+      message.id,
+      value,
+    )
+  }
+
+
+
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -117,7 +139,7 @@ export const ChatList = ({
                 </div>
               )}
               {message.role === "assistant" && (
-                <div>
+                <div className="relative group/feedback">
                   <div className="flex items-end gap-2">
                     <Avatar className="flex justify-start items-center rounded-full border">
                       <AvatarImage
@@ -152,6 +174,22 @@ export const ChatList = ({
                           </span>
                         )}
                     </span>
+                  </div>
+                  <div className="flex w-10 h-5 rounded-md absolute -bottom-2 right-0 cursor-pointer">
+                    <ThumbsDown
+                      className={cn(
+                        { ['text-red-500']: message.data?.feedback === false },
+                        "w-4 h-4 mr-2 hidden group-hover/feedback:flex hover:text-red-500"
+                      )}
+                      onClick={() => handleFeedbackEvent(index, false)}
+                    />
+                    <ThumbsUp
+                      className={cn(
+                        { ['text-green-400']: message.data?.feedback === true },
+                        "w-4 h-4 mr-2 hidden group-hover/feedback:flex hover:text-green-400"
+                      )}
+                      onClick={() => handleFeedbackEvent(index, true)}
+                    />
                   </div>
                 </div>
               )}

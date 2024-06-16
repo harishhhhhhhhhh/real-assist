@@ -18,10 +18,11 @@ model chat {
 }
 
 model message {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    id        String     @id @default(auto()) @map("_id") @db.ObjectId
     role      String
     content   String
-    chat      chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
-    chatId    String   @db.ObjectId
-    createdAt DateTime @default(now())
+    data      Json?
+    createdAt DateTime   @default(now())
+    chat      chat       @relation(fields: [chatId], references: [id], onDelete: Cascade)
+    chatId    String     @db.ObjectId
 }

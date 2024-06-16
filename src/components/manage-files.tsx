@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FileTextIcon, RotateCcw, Trash2, X } from "lucide-react";
 
-import { FileInfo } from "@/models/FileInfo";
+import { FileInfo } from "@/models";
 import {
     Tabs,
     TabsContent,

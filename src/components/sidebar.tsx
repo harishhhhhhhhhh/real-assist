@@ -7,7 +7,7 @@ import Image from "next/image";
 import { MessagesSquare, MoreVertical, SquarePen, Trash2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Chat } from "@/models/Chat";
+import { Chat } from "@/models";
 import { APPLICATION_NAME } from "@/lib/constants";
 import { getChatsService, deleteChatDataService, deleteChatsService } from "@/services";
 import { Button, buttonVariants } from "@/components/ui/button";

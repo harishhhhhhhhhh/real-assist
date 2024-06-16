@@ -1,8 +1,9 @@
 import { MouseEvent, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-import { Question } from "@/models/Question";
+import { Question } from "@/models";
 import { Button } from "../ui/button";
+import { DoubleArrowDownIcon, DoubleArrowUpIcon } from "@radix-ui/react-icons";
 
 export interface ChatFollowQuestionsProps {
   expanded: boolean;
@@ -24,13 +25,9 @@ export const ChatFollowQuestions = ({
   return (
     <>
       {!expanded &&
-        <div className="border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground p-2 rounded-md cursor-pointer group"
+        <div className="border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground p-2 rounded-md cursor-pointer"
           onClick={() => setOpenState(!openState)}>
-          <div className="flex gap-1">
-            <span className="size-1 rounded-full bg-slate-700 group-hover:motion-safe:animate-[bounce_1s_ease-in-out_infinite] dark:bg-slate-300"></span>
-            <span className="size-1 rounded-full bg-slate-700 group-hover:motion-safe:animate-[bounce_0.5s_ease-in-out_infinite] dark:bg-slate-300"></span>
-            <span className="size-1 rounded-full bg-slate-700 group-hover:motion-safe:animate-[bounce_1s_ease-in-out_infinite] dark:bg-slate-300"></span>
-          </div>
+          {openState ? <DoubleArrowUpIcon className="w-3 h-3" /> : <DoubleArrowDownIcon className="w-3 h-3" />}
         </div>
       }
       {openState &&

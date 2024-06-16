@@ -2,15 +2,19 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "react-oidc-context";
 import { useChat } from "ai/react";
 import { toast } from "sonner";
 
+import { MongoMessage } from "@/models";
 import { ChatBottombar } from "@/components/chat/chat-bottombar";
 import { ChatTopbar } from "@/components/chat/chat-topbar";
 import { ChatList } from "@/components/chat/chat-list";
 import { createChatDataService, createMessageDataService, getChatDataService } from "@/services";
+import { Message } from "ai";
 
 export default function ChatPage({ params }: { params: { id: string } }) {
+  const authContext = useAuth();
   const router = useRouter();
   const chatParamId = params.id?.[0];
   const [chatId, setChatId] = useState<string>(chatParamId);
@@ -19,6 +23,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
   const [chatLoading, setChatLoading] = useState(false);
   const {
     messages,
+    //data,
     input,
     isLoading,
     error,
@@ -29,12 +34,15 @@ export default function ChatPage({ params }: { params: { id: string } }) {
   } = useChat({
     key: 'real-assist',
     api: '/api/ai',
+    headers: {
+      'Authorization': `Bearer ${authContext.user?.access_token}`,
+    },
     onResponse: (response) => {
       if (response) {
         setLoadingSubmit(false);
       }
     },
-    onFinish: (message) => {
+    onFinish: async (message) => {
       if (chatId) {
         createMessageDataService(chatId, {
           role: 'assistant',
@@ -86,17 +94,26 @@ export default function ChatPage({ params }: { params: { id: string } }) {
     }
   }, []);
 
+
+  /* useEffect(() => {
+    if (!isLoading && !error && data) {
+      const docInfo = data.splice(-1);
+      console.log("data Here::", docInfo, messageId);
+    }
+  }, [data, messageId]); */
+
   return (
     <div className="flex flex-col justify-between w-full max-w-3xl h-full ">
       <ChatTopbar />
 
       <ChatList
-        messages={messages}
+        messages={messages as MongoMessage[]}
         isLoading={isLoading}
         chatLoading={chatLoading}
         loadingSubmit={loadingSubmit}
         error={error}
         formRef={formRef}
+        setMessages={setMessages}
         handleInputChange={handleInputChange}
       />
 

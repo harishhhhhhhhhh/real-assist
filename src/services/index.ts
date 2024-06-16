@@ -1,7 +1,6 @@
 import axios from "axios";
-import { Message } from "ai";
 
-import { Chat } from "@/models/Chat";
+import { Chat, MongoMessage } from "@/models";
 
 const axiosInstance = axios.create({
     headers: {
@@ -23,7 +22,7 @@ const setAuthToken = (token: string) => {
     );
 };
 
-export type MongoMessage = Omit<Message, 'id'> & { id?: string };
+export type Message = Omit<MongoMessage, 'id'> & {};
 
 const getChatsService = (): Promise<Chat[]> => {
     return axiosInstance.get('/api/chat')
@@ -40,9 +39,9 @@ const getChatDataService = (chatId: string): Promise<Chat> => {
         .then(response => response.data);
 }
 
-const createChatDataService = (messages: MongoMessage[]): Promise<Chat> => {
+const createChatDataService = (messages: Message[]): Promise<Chat> => {
     return axiosInstance.post(`/api/chat`, messages)
-    .then(response => response.data);
+        .then(response => response.data);
 }
 
 const deleteChatDataService = (chatId: string): Promise<void> => {
@@ -52,9 +51,19 @@ const deleteChatDataService = (chatId: string): Promise<void> => {
 
 const createMessageDataService = (
     chatId: string,
-    message: MongoMessage,
+    message: Message,
 ): Promise<Message> => {
     return axiosInstance.post(`/api/chat/${chatId}/message`, message)
+        .then(response => response.data);
+}
+
+const updateFeedbackService = (
+    messageId: string,
+    feedback: boolean,
+): Promise<Message> => {
+    return axiosInstance.patch(`/api/chat/message/${messageId}`, {
+        feedback
+    })
         .then(response => response.data);
 }
 
@@ -66,4 +75,5 @@ export {
     createChatDataService,
     deleteChatDataService,
     createMessageDataService,
+    updateFeedbackService,
 }

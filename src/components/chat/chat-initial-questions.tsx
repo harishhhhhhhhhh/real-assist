@@ -2,7 +2,7 @@ import { MouseEvent } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-import { Question } from "@/models/Question";
+import { Question } from "@/models";
 import { QUESTIONS_DATA } from "@/questions";
 import { Button } from "../ui/button";
 
