@@ -51,7 +51,7 @@ const deleteChatDataService = (chatId: string): Promise<void> => {
 
 const createMessageDataService = (
     chatId: string,
-    message: Message,
+    message: MongoMessage,
 ): Promise<Message> => {
     return axiosInstance.post(`/api/chat/${chatId}/message`, message)
         .then(response => response.data);
@@ -59,11 +59,16 @@ const createMessageDataService = (
 
 const updateFeedbackService = (
     messageId: string,
-    feedback: boolean,
+    feedback?: boolean,
 ): Promise<Message> => {
     return axiosInstance.patch(`/api/chat/message/${messageId}`, {
         feedback
     })
+        .then(response => response.data);
+}
+
+const getAnalyticsDataService = (): Promise<MongoMessage[]> => {
+    return axiosInstance.get(`/api/chat/analytics`)
         .then(response => response.data);
 }
 
@@ -76,4 +81,5 @@ export {
     deleteChatDataService,
     createMessageDataService,
     updateFeedbackService,
+    getAnalyticsDataService,
 }

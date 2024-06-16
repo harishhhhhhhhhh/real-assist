@@ -57,23 +57,18 @@ export const ChatList = ({
     });
   };
 
-
-
-
-  const handleFeedbackEvent = (index: number, value: boolean) => {
+  const handleFeedbackEvent = (index: number, value?: boolean) => {
     const message = messages[index];
     messages[index].data = {
       feedback: value
     };
+    setMessages([]);
     setMessages([...messages]);
     updateFeedbackService(
       message.id,
       value,
     )
   }
-
-
-
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -100,7 +95,7 @@ export const ChatList = ({
       <div className="w-full flex flex-col overflow-x-hidden overflow-y-hidden min-h-full justify-end">
         {messages.map((message, index) => (
           <motion.div
-            key={index}
+            key={message.id}
             layout
             initial={{ opacity: 0, scale: 1, y: 20, x: 0 }}
             animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
@@ -152,16 +147,16 @@ export const ChatList = ({
                     </Avatar>
                     <span className="bg-accent p-3 rounded-md max-w-xs sm:max-w-2xl overflow-x-auto">
                       {/* Check if the message content contains a code block */}
-                      {message.content.split("```").map((part, index) => {
-                        if (index % 2 === 0) {
+                      {message.content.split("```").map((part, mIndex) => {
+                        if (mIndex % 2 === 0) {
                           return (
-                            <Markdown key={index} remarkPlugins={[remarkGfm]}>
+                            <Markdown key={mIndex} remarkPlugins={[remarkGfm]}>
                               {part}
                             </Markdown>
                           );
                         } else {
                           return (
-                            <pre className="whitespace-pre-wrap" key={index}>
+                            <pre className="whitespace-pre-wrap" key={mIndex}>
                               <CodeDisplayBlock code={part} lang="" />
                             </pre>
                           );
@@ -175,20 +170,20 @@ export const ChatList = ({
                         )}
                     </span>
                   </div>
-                  <div className="flex w-10 h-5 rounded-md absolute -bottom-2 right-0 cursor-pointer">
+                  <div className="flex w-10 h-5 rounded-md absolute -bottom-5 right-0 cursor-pointer">
                     <ThumbsDown
                       className={cn(
                         { ['text-red-500']: message.data?.feedback === false },
-                        "w-4 h-4 mr-2 hidden group-hover/feedback:flex hover:text-red-500"
+                        "w-4 h-4 mr-2 hidden group-hover/feedback:flex"
                       )}
-                      onClick={() => handleFeedbackEvent(index, false)}
+                      onClick={() => handleFeedbackEvent(index, message.data?.feedback === false ? undefined : false)}
                     />
                     <ThumbsUp
                       className={cn(
                         { ['text-green-400']: message.data?.feedback === true },
-                        "w-4 h-4 mr-2 hidden group-hover/feedback:flex hover:text-green-400"
+                        "w-4 h-4 mr-2 hidden group-hover/feedback:flex"
                       )}
-                      onClick={() => handleFeedbackEvent(index, true)}
+                      onClick={() => handleFeedbackEvent(index, message.data?.feedback === true ? undefined : true)}
                     />
                   </div>
                 </div>

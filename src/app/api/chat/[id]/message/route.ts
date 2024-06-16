@@ -8,12 +8,14 @@ export async function POST
   (req: NextRequest,
     { params }: { params: { id: string } }
   ) {
-  const { role, content } = await req.json();
+  const { id, role, content, questionId } = await req.json();
   const result = await prisma.message.create({
     data: {
-      chatId: params.id,
+      id,
       role,
       content,
+      chatId: params.id,
+      questionId: questionId,
     },
   })
   return NextResponse.json(result, { status: 200 })

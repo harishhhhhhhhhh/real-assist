@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "react-oidc-context";
 import { useChat } from "ai/react";
 import { toast } from "sonner";
+import { Types } from 'mongoose';
 
 import { MongoMessage } from "@/models";
 import { ChatBottombar } from "@/components/chat/chat-bottombar";
 import { ChatTopbar } from "@/components/chat/chat-topbar";
 import { ChatList } from "@/components/chat/chat-list";
-import { createChatDataService, createMessageDataService, getChatDataService } from "@/services";
-import { Message } from "ai";
+import { createChatDataService, createMessageDataService, getAnalyticsDataService, getChatDataService } from "@/services";
 
 export default function ChatPage({ params }: { params: { id: string } }) {
   const authContext = useAuth();
@@ -37,6 +37,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
     headers: {
       'Authorization': `Bearer ${authContext.user?.access_token}`,
     },
+    generateId: () => new Types.ObjectId().toString(),
     onResponse: (response) => {
       if (response) {
         setLoadingSubmit(false);
@@ -45,8 +46,10 @@ export default function ChatPage({ params }: { params: { id: string } }) {
     onFinish: async (message) => {
       if (chatId) {
         createMessageDataService(chatId, {
+          id: message.id,
           role: 'assistant',
-          content: message.content
+          content: message.content,
+          questionId: messages[messages.length - 2].id
         })
       }
     },
@@ -62,6 +65,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
     setMessages([...messages]);
     if (chatId) {
       createMessageDataService(chatId, {
+        id: new Types.ObjectId().toString(),
         role: 'user',
         content: input
       })
@@ -94,6 +98,11 @@ export default function ChatPage({ params }: { params: { id: string } }) {
     }
   }, []);
 
+
+  /* useEffect(() => {
+    getAnalyticsDataService()
+        .then(data => console.log(data))
+  },[]) */
 
   /* useEffect(() => {
     if (!isLoading && !error && data) {

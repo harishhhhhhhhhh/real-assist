@@ -18,9 +18,6 @@ export async function GET(
         orderBy: {
           createdAt: 'asc'
         },
-        include: {
-          documents: true
-        }
       }
     },
   });
