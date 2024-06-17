@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { Chat, MongoMessage } from "@/models";
+import { Chat, FileInfo, MongoMessage } from "@/models";
 
 const axiosInstance = axios.create({
     headers: {
@@ -61,14 +61,35 @@ const updateFeedbackService = (
     messageId: string,
     feedback?: boolean,
 ): Promise<Message> => {
-    return axiosInstance.patch(`/api/chat/message/${messageId}`, {
-        feedback
-    })
+    return axiosInstance.patch(`/api/chat/message/${messageId}`, { feedback })
         .then(response => response.data);
 }
 
 const getAnalyticsDataService = (): Promise<MongoMessage[]> => {
     return axiosInstance.get(`/api/chat/analytics`)
+        .then(response => response.data);
+}
+
+const getUploadedFilesService = (): Promise<FileInfo[]> => {
+    return axiosInstance.get(`/api/files`)
+        .then(response => response.data);
+}
+
+const uploadFileService = (formData: FormData): Promise<FileInfo[]> => {
+    return axiosInstance.post(`/api/files`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    })
+        .then(response => response.data);
+}
+
+const deleteFileService = (file: FileInfo): Promise<void> => {
+    return axiosInstance.delete(`/api/files`, {
+        params: {
+            fileName: file.fileName
+        }
+    })
         .then(response => response.data);
 }
 
@@ -82,4 +103,7 @@ export {
     createMessageDataService,
     updateFeedbackService,
     getAnalyticsDataService,
+    getUploadedFilesService,
+    uploadFileService,
+    deleteFileService,
 }

@@ -70,8 +70,11 @@ const calculateChunkIds = (chunks: any) => {
     return chunks;
 }
 
-const processDocsStore = async () => {
-    return globalThis.store = globalThis.store ?? await processDocsSingleton();
+const processDocsStore = async (reset: boolean = false) => {
+    return globalThis.store = (reset ?
+        await processDocsSingleton() :
+        globalThis.store ?? await processDocsSingleton()
+    );
 }
 
 export default processDocsStore;

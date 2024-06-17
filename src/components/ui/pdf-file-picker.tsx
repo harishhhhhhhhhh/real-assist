@@ -4,7 +4,7 @@ import { UploadIcon } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 
 interface FilePickerProps {
-  setSelectedFiles: Dispatch<SetStateAction<File[]>>
+  setSelectedFiles: (files: File[]) => void
 }
 
 const PdfFilePicker = ({ setSelectedFiles }: FilePickerProps) => {

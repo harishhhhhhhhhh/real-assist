@@ -119,28 +119,28 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
                     <DialogContent>
                       <DialogHeader className="space-y-4">
                         <DialogTitle>Delete all chats?</DialogTitle>
-                        <DialogDescription>
-                          Are you sure you want to delete all of your chats? This action cannot be undone.
-                        </DialogDescription>
-                        <div className="flex justify-end gap-2">
-                          <DialogClose asChild>
-                            <Button
-                              variant="outline"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              Cancel
-                            </Button>
-                          </DialogClose>
-                          <DialogClose asChild>
-                            <Button
-                              variant="destructive"
-                              onClick={() => handleDeleteAllChats()}
-                            >
-                              Delete
-                            </Button>
-                          </DialogClose>
-                        </div>
                       </DialogHeader>
+                      <DialogDescription>
+                        Are you sure you want to delete all of your chats? This action cannot be undone.
+                      </DialogDescription>
+                      <div className="flex justify-end gap-2">
+                        <DialogClose asChild>
+                          <Button
+                            variant="outline"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Cancel
+                          </Button>
+                        </DialogClose>
+                        <DialogClose asChild>
+                          <Button
+                            variant="destructive"
+                            onClick={() => handleDeleteAllChats()}
+                          >
+                            Delete
+                          </Button>
+                        </DialogClose>
+                      </div>
                     </DialogContent>
                   </Dialog>
                 </div>
