@@ -1,6 +1,6 @@
 "use client";
 
-import { ExitIcon, UploadIcon } from "@radix-ui/react-icons";
+import { ExitIcon } from "@radix-ui/react-icons";
 
 import {
   DropdownMenu,
@@ -8,15 +8,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "./ui/dialog";
 import { useUserData } from "@/app/hooks/useUserData";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
-import { ManageFiles } from "./manage-files";
 
 export const UserSettings = () => {
   const { userName, signoutRedirect } = useUserData();
@@ -46,19 +40,6 @@ export const UserSettings = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-48 p-2">
-        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-          <Dialog>
-            <DialogTrigger asChild>
-              <div className="flex w-full gap-2 p-1 items-center cursor-pointer">
-                <UploadIcon className="w-4 h-4" />
-                Manage Files
-              </div>
-            </DialogTrigger>
-            <DialogContent className="p-0 overflow-hidden">
-              <ManageFiles />
-            </DialogContent>
-          </Dialog>
-        </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => signoutRedirect()}>
           <div className="flex w-full gap-2 p-1 items-center cursor-pointer">
             <ExitIcon className="w-4 h-4" />

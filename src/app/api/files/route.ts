@@ -39,8 +39,12 @@ export async function POST(req: NextRequest) {
       loading: false,
     })
   }
-  await processDocsStore(true);
   return NextResponse.json(filesList, { status: 200 });
+}
+
+export async function PUT(req: NextRequest) {
+  await processDocsStore(true);
+  return new Response(null, { status: 204 });
 }
 
 export async function DELETE(req: NextRequest) {
@@ -48,6 +52,5 @@ export async function DELETE(req: NextRequest) {
   const fileName = searchParams.get('fileName');
   const filePath = resolve(`${DIRECTORY_PATH}/${fileName}`);
   unlinkSync(filePath);
-  await processDocsStore(true);
   return new Response(null, { status: 204 });
 }

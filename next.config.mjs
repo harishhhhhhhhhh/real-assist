@@ -8,6 +8,11 @@ const nextConfig = {
                 destination: '/chat',
                 permanent: true,
             },
+            {
+                source: '/admin',
+                destination: '/admin/feedback',
+                permanent: true,
+            },
         ]
     },
 };

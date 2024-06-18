@@ -1,51 +1,211 @@
 export const INDIA_QUESTIONS = [{
-  content: "Employee Onboarding",
+  content: "India Employee Handbook",
+}, {
+  content: "Recruitment",
+  questions: [{
+    content: "Relocation Bonus",
+  }]
+}, {
+  content: "Onboarding",
+  questions: [{
+    content: "Global NHO 1",
+  }, {
+    content: "Local NHO 2",
+  }, {
+    content: "New Hire Checklist",
+  }, {
+    content: "IT Assets",
+  }, {
+    content: "Swag Kit",
+  }, {
+    content: "UKG login credentials",
+  }, {
+    content: "New Hire Experience Survey - Real Impressions",
+  }, {
+    content: "New Hire Roundtable - Kaledeoscope",
+  }]
+}, {
+  content: "Performance Management",
+  questions: [{
+    content: "Probation",
+  }, {
+    content: "Goal Setting",
+  }, {
+    content: "Performance Review",
+  }, {
+    content: "Rating Definitions",
+  }, {
+    content: "Monthly Check-In",
+  }, {
+    content: "Employee Self-Evaluation",
+  }]
+}, {
+  content: "Learning & Development",
+  questions: [{
+    content: "Learning Webinars",
+  }, {
+    content: "My Pathway",
+  }, {
+    content: "Change Management",
+  }, {
+    content: "My Pathway",
+  }, {
+    content: "Lead to Exceed",
+  }, {
+    content: "Leadership Toolkit",
+  }, {
+    content: "ERG Offerings",
+  }, {
+    content: "PluralSight",
+  }, {
+    content: "RealPage University (RPU)",
+  }]
+}, {
+  content: "Compensation & Benifits",
+  questions: [{
+    content: "Payroll",
+    questions: [{
+      content: "ADP",
+    }, {
+      content: "2024 IT slab rates",
+    }, {
+      content: "Declaring Investment ",
+    }, {
+      content: "Submiting Investment Proofs",
+    }, {
+      content: "Monthly Payroll Inputs",
+    }, {
+      content: "PF",
+    }, {
+      content: "Gratuity",
+    }, {
+      content: "Relocation policy",
+    }, {
+      content: "Changing salarybank a/c",
+    }, {
+      content: "POC",
+    }]
+  }, {
+    content: "Tuition Reimbursement",
+    questions: [{
+      content: "Pre approval process",
+    }, {
+      content: "Post approval process",
+    }, {
+      content: "Reimbursement process",
+    }]
+  }, {
+    content: "Internet Reimbursement",
+  }, {
+    content: "Medibuddy",
+    questions: [{
+      content: "Insurance",
+    }, {
+      content: "Medibuddy Helpdesk",
+    }, {
+      content: "Payroll & Benefits Helpdesk",
+    }]
+  }, {
+    content: "Rewards & Recognition",
+    questions: [{
+      content: "Global and Local Recognitions",
+    }]
+  }, {
+    content: "Employee Assistance Program (EAP)",
+  }, {
+    content: "Annual Health Check-up",
+  }]
+}, {
+  content: "Employee Relations",
+  questions: [{
+    content: "Employee Letters",
+  }, {
+    content: "REWS/Transport",
+  }, {
+    content: "Women employee safety",
+  }]
+}, {
+  content: "Employee Relations",
+  questions: [{
+    content: "Employee Letters",
+  }, {
+    content: "REWS/Transport",
+  }, {
+    content: "Women employee safety",
+  }]
+}, {
+  content: "Policies",
+  questions: [{
+    content: "Allowances",
+  }, {
+    content: "Internal Transfers",
+  }, {
+    content: "Leaves",
+    questions: [{
+      content: "EL Leave Encashment",
+    }, {
+      content: "Holiday Calendar",
+    }, {
+      content: "Issues with Leave Portal",
+    }]
+  },{
+    content: "Team Outing",
+  },{
+    content: "Prevention of Sexual Harrasment (POSH)",
+    questions: [{
+      content: "Prevention of Sexual Harrasment Policy",
+    }, {
+      content: "ICC Members",
+    }]
+  },{
+    content: "Maternity Leave Checklist",
+    questions: [{
+      content: "Insurance Enrollment",
+    }]
+  },{
+    content: "RTO",
+  },{
+    content: "Employment of Relatives",
+  }]
+}, {
+  content: "Employee Resource Groups",
+  questions: [{
+    content: "Empow-Her",
+  }, {
+    content: "BeWell",
+  }, {
+    content: "Real Heros",
+  }, {
+    content: "BERG",
+  }, {
+    content: "HOLA",
+  }, {
+    content: "RealPRIDE",
+  }]
 }, {
   content: "Employee Exit",
   questions: [{
-    content: "When will I receive my full and final (F&F) amount?",
+    content: "Resignation",
   }, {
-    content: "How is Earned Leave (EL) encashment calculated?",
+    content: "Exit Interview",
   }, {
-    content: "What is the process to submit the firm-issued assets?",
+    content: "Exit FAQ Document",
   }, {
-    content: "Will I be eligible for medical insurance after submitting my resignation?",
+    content: "Full & Final Settlement",
   }, {
-    content: "Can I submit tax proofs after the LWD and what is the available window for submission?",
-  }, {
-    content: "How to claim the internet reimbursement when in a notice period?",
-  }, {
-    content: "List down employee exit checklist",
+    content: "Exit Survey",
   }]
 }, {
-  content: "Income Tax",
+  content: "Point of Contact",
   questions: [{
-    content: "What are tax slabs and tax rates in New Tax Regime?",
+    content: "HRBP",
   }, {
-    content: "What are disallowed exemptions in New Tax Regime?",
+    content: "HR Ops",
   }, {
-    content: "What are allowable exemptions in New Tax Regime?",
+    content: "HR TAG",
   }, {
-    content: "What are tax slabs and tax rates in Old Tax Regime?",
+    content: "Comp. & Ben",
   }, {
-    content: "What are allowable exemptions in Old Tax Regime?",
-  }]
-}, {
-  content: "ADP Payroll",
-  questions: [{
-    content: "What are ADP Flexi bucket components?",
-  }, {
-    content: "What are Investment declaration steps?",
-  }, {
-    content: "What are Flexi declaration steps?",
-  }, {
-    content: "When is the declaration Window for investment & Flexi?",
-  }]
-}, {
-  content: "Medical Insurance",
-  questions: [{
-    content: "Top-up Premium details?",
-  }, {
-    content: "Contact info?",
+    content: "L&D",
   }]
 }]

@@ -19,20 +19,20 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
-} from "./ui/dialog";
+} from "../ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { UserSettings } from "./user-settings";
-import { SidebarSkeleton } from "./sidebar-skeleton";
+} from "../ui/dropdown-menu";
+import { UserSettings } from "../user-settings";
+import { SidebarSkeleton } from "../sidebar-skeleton";
 
 interface SidebarProps {
   isCollapsed: boolean;
 }
 
-export const Sidebar = ({ isCollapsed }: SidebarProps) => {
+export const ChatSidebar = ({ isCollapsed }: SidebarProps) => {
   const router = useRouter();
   const params = useParams();
   const refreshChatId = '/chat/123456c1234c12345e123456';

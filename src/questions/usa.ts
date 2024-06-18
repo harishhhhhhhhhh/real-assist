@@ -1,11 +1,23 @@
 export const USA_QUESTIONS = [{
-    content: "Employee Onboarding",
+    content: "US Employee Handbook",
+}, {
+    content: "Recruitment",
+}, {
+    content: "Onboarding",
+}, {
+    content: "Performance Management",
+}, {
+    content: "Learning & Development",
+}, {
+    content: "Compensation & Benifits",
+}, {
+    content: "Employee Relations",
+}, {
+    content: "Policies",
+}, {
+    content: "Employee Resource Groups",
 }, {
     content: "Employee Exit",
 }, {
-    content: "Income Tax",
-}, {
-    content: "ADP Payroll Setup",
-}, {
-    content: "Medical Insurance",
+    content: "Point of Contacts",
 }]

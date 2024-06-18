@@ -1,10 +1,15 @@
 import { Question } from "@/models";
 
+import { REALPAGE_QUESTIONS } from "./realpage";
 import { USA_QUESTIONS } from "./usa";
 import { INDIA_QUESTIONS } from "./india";
 import { PHILIPPINES_QUESTIONS } from "./philippines";
 
 export const QUESTIONS_DATA: Question[] = [
+  {
+    content: "RealPage",
+    questions: REALPAGE_QUESTIONS,
+  },
   {
     content: "USA",
     questions: USA_QUESTIONS,

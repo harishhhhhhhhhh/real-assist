@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 
-import { setAuthToken } from "@/services";
+import { setAuthToken } from "@/lib/axios";
 import { Loader } from "@/components/ui/loader";
 import {
     ResizableHandle,
@@ -11,7 +11,7 @@ import {
     ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { cn } from "@/lib/utils";
-import { Sidebar } from "@/components/sidebar";
+import { ChatSidebar } from "@/components/chat/chat-sidebar";
 
 export default function DashboardLayout({
     children,
@@ -82,7 +82,7 @@ export default function DashboardLayout({
                                 : "hidden md:block"
                         )}
                     >
-                        <Sidebar
+                        <ChatSidebar
                             isCollapsed={isCollapsed || isMobile}
                         />
                     </ResizablePanel>

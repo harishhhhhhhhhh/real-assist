@@ -2,9 +2,8 @@ import { PromptTemplate } from '@langchain/core/prompts';
 import { RunnableSequence } from '@langchain/core/runnables'
 import { formatDocumentsAsString } from 'langchain/util/document';
 
-import { StreamingTextResponse, Message, AIStream, StreamData, LangChainAdapter } from "ai";
+import { StreamingTextResponse, Message, AIStream, LangChainAdapter } from "ai";
 import { ChatOllama } from "@langchain/community/chat_models/ollama";
-import { Document } from "@langchain/core/documents";
 
 import { OLLAMA_MODEL, OLLAMA_URL } from "@/lib/constants";
 import processDocsStore from '@/lib/processDocs';
@@ -12,7 +11,19 @@ import processDocsStore from '@/lib/processDocs';
 
 export const dynamic = "force-dynamic";
 
-const SYSTEM_TEMPLATE = `You are a  RealPage Hr assistant. Your primary task is to answer questions based STRICTLY on the provided context.
+/**
+ * Basic memory formatter that stringifies and passes
+ * message history directly into the model.
+ */
+const formatMessage = (message: Message) => {
+  return `${message.role}: ${message.content}`;
+};
+
+const DONT_KNOW_MESSAGE = `I am not aware of the answer to the question.
+Please contact the HR team for assistance.
+Email: hr@realpage.com`;
+
+const SYSTEM_TEMPLATE = `You are a  RealPage HR assistant. Your primary task is to answer questions based STRICTLY on the provided context.
  
 RULES:
 - ONLY answer if the question relates directly to the provided context.
@@ -44,18 +55,11 @@ export async function POST(req: Request) {
       return new StreamingTextResponse(stream);
     }
 
-    const { vectorStore, allChunks } = await processDocsStore();
-    const relevantVectors = await vectorStore.similaritySearch(currentMessage.content, 1);
-    /* const contextText = relevantVectors.map((doc: any) => doc.page_content).join("\n\n---\n\n");
-    console.log("relevant vectorssss", relevantVectors);
-    console.log("curent message", currentMessage.content)
-    // console.log("things going to llm as context", formatDocumentsAsString(relevantVectors))
-    const allChunks = getProcessedChunks();
-    // console.log("all chunks", allChunks) */
-    const chunkIds = relevantVectors.map((vector: any) => vector.metadata.id);
-    const combinedVectors = createCombinedChunks(chunkIds, allChunks, 2);
-    console.log("combinedVectors::", combinedVectors);
-    //console.log("previos current will all vecotrs", combinedVectors);
+    const retriever = await processDocsStore();
+
+    const revelentDocs = await retriever.invoke(currentMessage.content);
+
+    //console.log("::::::::::::::::::relevant Docs :::::::::::::", revelentDocs)
 
     const chain = RunnableSequence.from([
       {
@@ -76,62 +80,15 @@ export async function POST(req: Request) {
     const stream = await chain.stream({
       question: currentMessage.content,
       chat_history: formattedPreviousMessages.join('\n'),
-      context: combinedVectors,
-      dont_know_message: getDontKnowMessage(),
+      context: revelentDocs,
+      dont_know_message: DONT_KNOW_MESSAGE,
     });
 
-    const streamData = new StreamData();
-
-    combinedVectors.forEach(doc => streamData.append(doc.metadata));
-
-    const aiStream = LangChainAdapter.toAIStream(stream, {
-      onFinal: () => streamData.close(),
-    });
+    const aiStream = LangChainAdapter.toAIStream(stream);
 
     // Respond with the stream
-    return new StreamingTextResponse(
-      aiStream,
-      {},
-      streamData,
-    );
+    return new StreamingTextResponse(aiStream);
   } catch (e: any) {
     return Response.json({ error: e.message }, { status: e.status ?? 500 });
   }
-}
-
-/**
- * Basic memory formatter that stringifies and passes
- * message history directly into the model.
- */
-const formatMessage = (message: Message) => {
-  return `${message.role}: ${message.content}`;
-};
-
-const getDontKnowMessage = () => {
-  return (`
-  I am not aware of the answer to the question.
-  Please contact the HR team for assistance.
-  Email: hr@realpage.com
-`)
-}
-
-const createCombinedChunks = (chunkIds: number[], allChunks: Document[], length: number) => {
-  return chunkIds.map((chunkId: any) => {
-    const currentChunkIndex = allChunks.findIndex((chunk: any) => chunk.metadata.id === chunkId);
-
-    let chunksListContent = [];
-    for (let i = (currentChunkIndex - length); i <= (currentChunkIndex + length); i++) {
-      if (allChunks[i]) {
-        chunksListContent.push(allChunks[i].pageContent);
-      }
-    }
-
-    const currentChunk = allChunks[currentChunkIndex];
-
-    const combinedPageContent = chunksListContent.join('\n\n---\n\n');
-    return new Document({
-      pageContent: combinedPageContent,
-      metadata: { ...currentChunk.metadata }
-    });
-  });
 }

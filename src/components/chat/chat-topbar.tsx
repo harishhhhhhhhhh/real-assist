@@ -7,7 +7,7 @@ import {
   SheetContent,
   SheetTrigger
 } from "@/components/ui/sheet";
-import { Sidebar } from "../sidebar";
+import { ChatSidebar } from "./chat-sidebar";
 import { ModeToggle } from "../mode-toggle";
 
 export const ChatTopbar = () => {
@@ -18,7 +18,7 @@ export const ChatTopbar = () => {
           <HamburgerMenuIcon className="w-5 h-5" />
         </SheetTrigger>
         <SheetContent side="left">
-          <Sidebar isCollapsed={false} />
+          <ChatSidebar isCollapsed={false} />
         </SheetContent>
         <ModeToggle />
       </Sheet>
