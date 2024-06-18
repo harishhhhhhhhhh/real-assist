@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 import { Question } from "@/models";
+import { cn } from "@/lib/utils";
 import { QUESTIONS_DATA } from "@/questions";
 import { Button } from "../ui/button";
 
@@ -29,11 +30,17 @@ export const ChatInitialQuestions = ({ onClickQuestion }: ChatInitialQuestionsPr
         </div>
 
         <div className="w-full px-4 sm:max-w-3xl grid gap-2 sm:grid-cols-3 sm:gap-4 text-sm">
-          {QUESTIONS_DATA.map(question => {
+          {QUESTIONS_DATA.map((question, index) => {
             const delay = Math.random() * 0.25;
             return (
               <motion.div
                 key={question.content}
+                className={cn(
+                  {
+                    ["col-start-2 col-end-3"]: index === 0,
+                    ["col-start-1"]: index === 1,
+                  },
+                )}
                 initial={{ opacity: 0, scale: 1, y: 10, x: 0 }}
                 animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
                 exit={{ opacity: 0, scale: 1, y: 10, x: 0 }}
@@ -46,7 +53,7 @@ export const ChatInitialQuestions = ({ onClickQuestion }: ChatInitialQuestionsPr
                 <Button
                   type="button"
                   variant="outline"
-                  className="sm:text-start px-4 py-8 flex w-full justify-center sm:justify-start items-center text-sm whitespace-pre-wrap"
+                  className="text-center px-4 py-8 flex w-full justify-center items-center text-sm whitespace-pre-wrap"
                   onClick={(e) => onClickQuestion(e, question)}
                 >
                   {question.content}

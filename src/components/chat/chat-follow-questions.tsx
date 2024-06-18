@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 import { Question } from "@/models";
 import { Button } from "../ui/button";
-import { DoubleArrowDownIcon, DoubleArrowUpIcon } from "@radix-ui/react-icons";
+import { ChevronRightIcon, DoubleArrowDownIcon, DoubleArrowUpIcon } from "@radix-ui/react-icons";
 
 export interface ChatFollowQuestionsProps {
   expanded: boolean;
@@ -49,10 +49,11 @@ export const ChatFollowQuestions = ({
                 <Button
                   type="button"
                   variant="outline"
-                  className="sm:text-start px-4 py-6 flex justify-center sm:justify-start items-center text-sm whitespace-pre-wrap"
+                  className="sm:text-start px-4 py-5 flex justify-center sm:justify-start items-center text-sm whitespace-pre-wrap"
                   onClick={(e) => onClickQuestion(e, question)}
                 >
                   {question.content}
+                  {question.questions?.length && <ChevronRightIcon className="ml-2" width={18} height={18}/>}
                 </Button>
               </motion.div>
             );
