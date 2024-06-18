@@ -18,12 +18,13 @@ model chat {
 }
 
 model message {
-    id         String   @id @default(auto()) @map("_id") @db.ObjectId
-    role       String
-    content    String
-    data       Json?
-    createdAt  DateTime @default(now())
-    chat       chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
-    chatId     String   @db.ObjectId
-    questionId String   @db.ObjectId
+    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    role        String
+    content     String
+    data        Json?
+    annotations Json[]
+    createdAt   DateTime @default(now())
+    chat        chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+    chatId      String   @db.ObjectId
+    questionId  String?  @db.ObjectId
 }

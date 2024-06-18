@@ -44,11 +44,6 @@ const updateFeedbackService = (
         .then(response => response.data);
 }
 
-const getAnalyticsDataService = (): Promise<MongoMessage[]> => {
-    return axiosInstance.get(`/api/chat/analytics`)
-        .then(response => response.data);
-}
-
 export {
     getChatsService,
     deleteChatsService,
@@ -57,5 +52,4 @@ export {
     deleteChatDataService,
     createMessageDataService,
     updateFeedbackService,
-    getAnalyticsDataService,
 }

@@ -1,11 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+import { getFeedbackMessagesService } from "@/services";
 import { Loader } from "@/components/ui/loader";
+import { MongoMessage } from "@/models";
 
 export default function FeedbackPage() {
   const [loading, setLoading] = useState<boolean>(true);
+  const [feedbackData, setFeedbackData] = useState<MongoMessage[]>([]);
+
+  useEffect(() => {
+    setLoading(true);
+    getFeedbackMessagesService()
+      .then(data => setFeedbackData(data))
+      .finally(() => setLoading(false));
+  }, [])
 
   return (
     <div className="w-full h-full overflow-auto">
@@ -19,8 +29,10 @@ export default function FeedbackPage() {
           height={2}
           fullScreen={false}
         /> :
-        <div className="flex w-full">
-
+        <div className="flex flex-col w-full">
+          {feedbackData.map(item => 
+            <div>{item.id}</div>
+          )}
         </div>}
     </div>
   );

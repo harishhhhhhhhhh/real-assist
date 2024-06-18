@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   const result = await prisma.message.findMany({
     where: {
       data: {
-        not: null
+        not: null,
       }
     },
     orderBy: {

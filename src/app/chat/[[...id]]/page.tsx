@@ -11,7 +11,7 @@ import { MongoMessage } from "@/models";
 import { ChatBottombar } from "@/components/chat/chat-bottombar";
 import { ChatTopbar } from "@/components/chat/chat-topbar";
 import { ChatList } from "@/components/chat/chat-list";
-import { createChatDataService, createMessageDataService, getAnalyticsDataService, getChatDataService } from "@/services";
+import { createChatDataService, createMessageDataService, getChatDataService } from "@/services";
 
 export default function ChatPage({ params }: { params: { id: string } }) {
   const authContext = useAuth();
@@ -21,9 +21,9 @@ export default function ChatPage({ params }: { params: { id: string } }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [chatLoading, setChatLoading] = useState(false);
+  const [isFinished, setFinished] = useState(false);
   const {
     messages,
-    //data,
     input,
     isLoading,
     error,
@@ -44,14 +44,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
       }
     },
     onFinish: async (message) => {
-      if (chatId) {
-        createMessageDataService(chatId, {
-          id: message.id,
-          role: 'assistant',
-          content: message.content,
-          questionId: messages[messages.length - 2].id
-        })
-      }
+      setFinished(true);
     },
     onError: (error) => {
       setLoadingSubmit(false);
@@ -60,6 +53,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
   });
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    setFinished(false);
     e.preventDefault();
     setLoadingSubmit(true);
     setMessages([...messages]);
@@ -98,18 +92,21 @@ export default function ChatPage({ params }: { params: { id: string } }) {
     }
   }, []);
 
-
-  /* useEffect(() => {
-    getAnalyticsDataService()
-        .then(data => console.log(data))
-  },[]) */
-
-  /* useEffect(() => {
-    if (!isLoading && !error && data) {
-      const docInfo = data.splice(-1);
-      console.log("data Here::", docInfo, messageId);
+  useEffect(() => {
+    if (isFinished && !error) {
+      if (chatId) {
+        const currentMessage = messages[messages.length - 1];
+        const previousMessageId = messages[messages.length - 2].id;
+        createMessageDataService(chatId, {
+          id: currentMessage.id,
+          role: currentMessage.role,
+          content: currentMessage.content,
+          annotations: currentMessage.annotations,
+          questionId: previousMessageId,
+        })
+      }
     }
-  }, [data, messageId]); */
+  }, [isFinished]);
 
   return (
     <div className="flex flex-col justify-between w-full max-w-3xl h-full ">

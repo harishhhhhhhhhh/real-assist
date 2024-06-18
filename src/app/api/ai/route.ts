@@ -2,7 +2,7 @@ import { PromptTemplate } from '@langchain/core/prompts';
 import { RunnableSequence } from '@langchain/core/runnables'
 import { formatDocumentsAsString } from 'langchain/util/document';
 
-import { StreamingTextResponse, Message, AIStream, LangChainAdapter } from "ai";
+import { StreamingTextResponse, Message, AIStream, LangChainAdapter, StreamData } from "ai";
 import { ChatOllama } from "@langchain/community/chat_models/ollama";
 
 import { OLLAMA_MODEL, OLLAMA_URL } from "@/lib/constants";
@@ -84,10 +84,20 @@ export async function POST(req: Request) {
       dont_know_message: DONT_KNOW_MESSAGE,
     });
 
-    const aiStream = LangChainAdapter.toAIStream(stream);
+    const streamData = new StreamData();
+    streamData.appendMessageAnnotation(revelentDocs.map(doc => ({
+      source: doc.metadata.source,
+      pageNumber: doc.metadata.loc.pageNumber,
+      linesFrom: doc.metadata.loc.lines.from,
+      linesTo: doc.metadata.loc.lines.to,
+    })));
+
+    const aiStream = LangChainAdapter.toAIStream(stream, {
+      onFinal: () => streamData.close(),
+    });
 
     // Respond with the stream
-    return new StreamingTextResponse(aiStream);
+    return new StreamingTextResponse(aiStream, {}, streamData);
   } catch (e: any) {
     return Response.json({ error: e.message }, { status: e.status ?? 500 });
   }
