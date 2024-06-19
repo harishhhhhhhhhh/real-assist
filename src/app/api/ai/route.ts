@@ -59,7 +59,7 @@ export async function POST(req: Request) {
 
     const revelentDocs = await retriever.invoke(currentMessage.content);
 
-    //console.log("::::::::::::::::::relevant Docs :::::::::::::", revelentDocs)
+    console.log("::::::::::::::::::relevant Docs :::::::::::::", revelentDocs);
 
     const chain = RunnableSequence.from([
       {

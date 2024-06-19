@@ -202,28 +202,28 @@ export const ChatSidebar = ({ isCollapsed }: SidebarProps) => {
                             <DialogContent>
                               <DialogHeader className="space-y-4">
                                 <DialogTitle>Delete chat?</DialogTitle>
-                                <DialogDescription>
-                                  Are you sure you want to delete this chat? This action cannot be undone.
-                                </DialogDescription>
-                                <div className="flex justify-end gap-2">
-                                  <DialogClose asChild>
-                                    <Button
-                                      variant="outline"
-                                      onClick={(e) => e.stopPropagation()}
-                                    >
-                                      Cancel
-                                    </Button>
-                                  </DialogClose>
-                                  <DialogClose asChild>
-                                    <Button
-                                      variant="destructive"
-                                      onClick={() => handleDeleteChat(id)}
-                                    >
-                                      Delete
-                                    </Button>
-                                  </DialogClose>
-                                </div>
                               </DialogHeader>
+                              <DialogDescription>
+                                Are you sure you want to delete this chat? This action cannot be undone.
+                              </DialogDescription>
+                              <div className="flex justify-end gap-2">
+                                <DialogClose asChild>
+                                  <Button
+                                    variant="outline"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    Cancel
+                                  </Button>
+                                </DialogClose>
+                                <DialogClose asChild>
+                                  <Button
+                                    variant="destructive"
+                                    onClick={() => handleDeleteChat(id)}
+                                  >
+                                    Delete
+                                  </Button>
+                                </DialogClose>
+                              </div>
                             </DialogContent>
                           </Dialog>
                         </DropdownMenuContent>

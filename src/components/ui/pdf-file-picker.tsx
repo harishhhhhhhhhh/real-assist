@@ -1,13 +1,16 @@
 'use client'
 
 import { UploadIcon } from "lucide-react";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
+
+import { cn } from "@/lib/utils";
 
 interface FilePickerProps {
+  className?: string;
   setSelectedFiles: (files: File[]) => void
 }
 
-const PdfFilePicker = ({ setSelectedFiles }: FilePickerProps) => {
+const PdfFilePicker = ({ setSelectedFiles, className }: FilePickerProps) => {
   const [status, setStatus] = useState('Only upload PDF files');
 
   const handleFiles = (files: FileList) => {
@@ -21,7 +24,10 @@ const PdfFilePicker = ({ setSelectedFiles }: FilePickerProps) => {
   }
 
   return (
-    <div className="flex items-center justify-center w-full">
+    <div className={cn(
+      "flex items-center justify-center w-full",
+      className
+  )}>
       <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
         <div className="flex flex-col items-center justify-center pt-5 pb-6">
           <UploadIcon className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"></UploadIcon>
