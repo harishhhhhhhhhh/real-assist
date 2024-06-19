@@ -8,94 +8,50 @@ export const INDIA_QUESTIONS = [{
 }, {
   content: "Onboarding",
   questions: [{
-    content: "Global NHO 1",
+    content: "New Hire Onboarding Check List",
   }, {
-    content: "Local NHO 2",
-  }, {
-    content: "New Hire Checklist",
-  }, {
-    content: "IT Assets",
-  }, {
-    content: "Swag Kit",
-  }, {
-    content: "UKG login credentials",
-  }, {
-    content: "New Hire Experience Survey - Real Impressions",
-  }, {
-    content: "New Hire Roundtable - Kaledeoscope",
-  }]
-}, {
-  content: "Performance Management",
-  questions: [{
-    content: "Probation",
-  }, {
-    content: "Goal Setting",
-  }, {
-    content: "Performance Review",
-  }, {
-    content: "Rating Definitions",
-  }, {
-    content: "Monthly Check-In",
-  }, {
-    content: "Employee Self-Evaluation",
-  }]
-}, {
-  content: "Learning & Development",
-  questions: [{
-    content: "Learning Webinars",
-  }, {
-    content: "My Pathway",
-  }, {
-    content: "Change Management",
-  }, {
-    content: "My Pathway",
-  }, {
-    content: "Lead to Exceed",
-  }, {
-    content: "Leadership Toolkit",
-  }, {
-    content: "ERG Offerings",
-  }, {
-    content: "PluralSight",
-  }, {
-    content: "RealPage University (RPU)",
+    content: "What support required for new hire?",
   }]
 }, {
   content: "Compensation & Benifits",
   questions: [{
-    content: "Payroll",
+    content: "Income Tax",
     questions: [{
-      content: "ADP",
+      role: 'user',
+      content: "What are tax slabs and tax rates in New Tax Regime?",
     }, {
-      content: "2024 IT slab rates",
+      role: 'user',
+      content: "What are disallowed exemptions in New Tax Regime?",
     }, {
-      content: "Declaring Investment ",
+      role: 'user',
+      content: "What are allowable exemptions in New Tax Regime?",
     }, {
-      content: "Submiting Investment Proofs",
+      role: 'user',
+      content: "Old Tax Regime tax slabs",
     }, {
-      content: "Monthly Payroll Inputs",
-    }, {
-      content: "PF",
-    }, {
-      content: "Gratuity",
-    }, {
-      content: "Relocation policy",
-    }, {
-      content: "Changing salarybank a/c",
-    }, {
-      content: "POC",
+      role: 'user',
+      content: "What are allowable exemptions in Old Tax Regime?",
     }]
   }, {
     content: "Tuition Reimbursement",
     questions: [{
-      content: "Pre approval process",
+      content: "What is Tuition Reimbursement program?",
     }, {
-      content: "Post approval process",
+      content: "What is the maximum amount an employee is eligible to be reimbursed in a calendar year?",
     }, {
-      content: "Reimbursement process",
+      content: "What is the process for Tuition Reimbursement?",
     }]
   }, {
-    content: "Internet Reimbursement",
+    content: "Internet Expense Allowance",
+    questions: [{
+      content: "What is Internet Expense Allowance policy?",
+    }, {
+      content: "What is the maximum amount an employee can claim in a month?",
+    }, {
+      content: "What are the guidelines for Internet Expense Reimbursement?",
+    }, {
+      content: "What is the process for Internet Expense Reimbursement?",
+    }]
   }, {
     content: "Medibuddy",
     questions: [{
@@ -116,24 +72,6 @@ export const INDIA_QUESTIONS = [{
     content: "Annual Health Check-up",
   }]
 }, {
-  content: "Employee Relations",
-  questions: [{
-    content: "Employee Letters",
-  }, {
-    content: "REWS/Transport",
-  }, {
-    content: "Women employee safety",
-  }]
-}, {
-  content: "Employee Relations",
-  questions: [{
-    content: "Employee Letters",
-  }, {
-    content: "REWS/Transport",
-  }, {
-    content: "Women employee safety",
-  }]
-}, {
   content: "Policies",
   questions: [{
     content: "Allowances",
@@ -148,64 +86,62 @@ export const INDIA_QUESTIONS = [{
     }, {
       content: "Issues with Leave Portal",
     }]
-  },{
-    content: "Team Outing",
-  },{
+  }, {
     content: "Prevention of Sexual Harrasment (POSH)",
     questions: [{
       content: "Prevention of Sexual Harrasment Policy",
     }, {
       content: "ICC Members",
     }]
-  },{
+  }, {
     content: "Maternity Leave Checklist",
     questions: [{
       content: "Insurance Enrollment",
     }]
-  },{
+  }, {
     content: "RTO",
-  },{
+  }, {
     content: "Employment of Relatives",
   }]
 }, {
   content: "Employee Resource Groups",
   questions: [{
-    content: "Empow-Her",
+    content: "List down all the Employee Resource Groups.",
+  },{
+    content: "What is BERG group?",
   }, {
-    content: "BeWell",
+    content: "What is EMPOW-HER group?",
   }, {
-    content: "Real Heros",
+    content: "WHat is Be Well group?",
   }, {
-    content: "BERG",
+    content: "What is HOLA group?",
   }, {
-    content: "HOLA",
+    content: "What is RealPRIDE group?",
   }, {
-    content: "RealPRIDE",
+    content: "WHat is Real Heroes group?",
   }]
 }, {
   content: "Employee Exit",
   questions: [{
-    content: "Resignation",
+    role: 'user',
+    content: "When will I receive my full and final (F&F) amount?",
   }, {
-    content: "Exit Interview",
+    role: 'user',
+    content: "How is Earned Leave (EL) encashment calculated?",
   }, {
-    content: "Exit FAQ Document",
+    role: 'user',
+    content: "What is the process to submit the firm-issued assets?",
   }, {
-    content: "Full & Final Settlement",
+    role: 'user',
+    content: "Will I be eligible for medical insurance after submitting my resignation?",
   }, {
-    content: "Exit Survey",
-  }]
-}, {
-  content: "Point of Contact",
-  questions: [{
-    content: "HRBP",
+    role: 'user',
+    content: "Can I submit tax proofs after the LWD and what is the available window for submission?",
   }, {
-    content: "HR Ops",
+    role: 'user',
+    content: "How to claim the internet reimbursement when in a notice period?",
   }, {
-    content: "HR TAG",
-  }, {
-    content: "Comp. & Ben",
-  }, {
-    content: "L&D",
+    role: 'user',
+    content: "List down Exit Checklist",
   }]
 }]

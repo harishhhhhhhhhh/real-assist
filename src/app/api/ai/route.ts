@@ -21,10 +21,13 @@ const formatMessage = (message: Message) => {
 
 const DONT_KNOW_MESSAGE = `I am not aware of the answer to the question.
 Please contact the HR team for assistance.
-Email: hr@realpage.com`;
+Email: HR_BP@REALPAGE.COM`;
 
-const SYSTEM_TEMPLATE = `You are a  RealPage HR assistant. Your primary task is to answer questions based STRICTLY on the provided context.
- 
+const SYSTEM_TEMPLATE = `You are a HR assistant chatbot. Your primary task is to answer questions based STRICTLY on the provided context.
+Context information is below.
+---------------------
+context: {context}
+---------------------
 RULES:
 - ONLY answer if the question relates directly to the provided context.
 - Do NOT provide information that is not explicitly mentioned in the context. Avoid speculating or adding details from outside the context.
@@ -37,8 +40,6 @@ Remember: Stick to the context. If uncertain, respond with {dont_know_message}. 
 
 chat_history: {chat_history} 
 
-context: {context}
- 
 question: {question}`;
 
 export async function POST(req: Request) {
@@ -84,20 +85,10 @@ export async function POST(req: Request) {
       dont_know_message: DONT_KNOW_MESSAGE,
     });
 
-    const streamData = new StreamData();
-    streamData.appendMessageAnnotation(revelentDocs.map(doc => ({
-      source: doc.metadata.source,
-      pageNumber: doc.metadata.loc.pageNumber,
-      linesFrom: doc.metadata.loc.lines.from,
-      linesTo: doc.metadata.loc.lines.to,
-    })));
-
-    const aiStream = LangChainAdapter.toAIStream(stream, {
-      onFinal: () => streamData.close(),
-    });
+    const aiStream = LangChainAdapter.toAIStream(stream);
 
     // Respond with the stream
-    return new StreamingTextResponse(aiStream, {}, streamData);
+    return new StreamingTextResponse(aiStream);
   } catch (e: any) {
     return Response.json({ error: e.message }, { status: e.status ?? 500 });
   }

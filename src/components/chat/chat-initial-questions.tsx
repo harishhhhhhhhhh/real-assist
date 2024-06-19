@@ -25,6 +25,7 @@ export const ChatInitialQuestions = ({ onClickQuestion }: ChatInitialQuestionsPr
             priority
           />
           <p className="text-center text-lg text-muted-foreground">
+            Hi, I am Real Assist, your HR assistant.<br/>
             How can I help you today?
           </p>
         </div>
